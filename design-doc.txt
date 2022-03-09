@@ -284,3 +284,6 @@ TODO reflex-dom combining event timelines:
 
 to make the sorts (asc, desc) work, the first value in the event must be the timestamp of the occurrance
 \:~ a,b,c
+
+NB. use the dark reader firefox extesion to convert to a default dark mode
+value or vice versa

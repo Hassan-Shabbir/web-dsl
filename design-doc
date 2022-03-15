@@ -285,5 +285,78 @@ TODO reflex-dom combining event timelines:
 to make the sorts (asc, desc) work, the first value in the event must be the timestamp of the occurrance
 \:~ a,b,c
 
-NB. use the dark reader firefox extesion to convert to a default dark mode
-value or vice versa
+NB. use the dark reader firefox extesion to convert to a default dark mode value or vice versa
+
+NB. apply styles using css selectors, as well as combinators (>^*~, etc)
+p{hi} NB. creates p
+p = .hi NB. sets all p to have hi class
+p = {hi} NB. set all p body to hi, warn?
+NB. therefore, p{hi} creates, p={hi} updates
+NB. this is important otherwise data will be overwritten, eg.
+.foo{Hi};.foo{Hello}
+
+NB. what is the difference between ; (new command) and + (next sibling elem)
+NB. should they be merged?
+
+p = .bg-red-300 NB. sets all p to have red bg
+p = .bg-red-300; #names = .bg-gray-200 NB. one-liner using ; evaluated left to right?
+p = hi NB. error!
+p = .bg-red-300 :hover.bg-red-600 NB. set multiple styles on one selector/element
+#foo * = .red-300 NB. everything inside will have red text (recursive)
+
+NB. use : to mean default interaction (click usually) and :hover for styles to apply on hover
+#foo:hover.bg-red-300 NB. create foo id with red background only on hover
+#foo:hover = .bg-red-300 NB. update foo to have this background on hover
+#foo:hover.bg-red-300:focused.bg-red-400 NB. chain different effects
+#foo:hover = .bg-red-300; #foo:focused = .bg-red-400
+
+NB. determine a way of doing italics/bold/underline ie inline tags
+p{foo b{bar} baz} => p{foo}+p.text-weight-800{bar}+p{baz} 
+NB. should it use markdown styling?
+
+NB. type system should be done with a special comment that defines the
+following: 
+1) general type (color, along with defaults of the rest), 
+and only two (to determine the secondary) of the following:
+2) design line (shapes)
+3) texture
+4) fabrication
+5) pattern
+
+NB. use @ to define styles rather than cluttering design with classes? 
+NB. this can be said to be based on @apply I guess
+NB. base the @command on the first letters of the two commands
+NB. ie display:grid becomes @dg
+NB. and padding-left:1rem; padding-right:1rem; becomes @px4
+NB. create a scale that applies to all elements that does not have points
+
+NB. use css reset, but only some parts (normalize.css)
+
+NB. have an easy way of defining a grid (they should be very common)
+NB. plus an easy way to define grid with elements centered
+
+NB. all gen code should be responsive including things like typography
+
+NB. set default styles in your file
+h1 = .text-3xl.font-weight-800.text-gray-900
+
+NB. check which ascii characters can be used
+NB. create a language BNF
+
+NB. how should elements be deleted, and how should dom traversal work
+
+NB. how should components work?
+
+NB. use scoped css (somewhat-)like in svelte: root styles affect everything,
+NB. but component styling only affects the current component and not children
+
+NB. also include the tag's properties as a map, ie. textarea_p
+NB. for accessing the props such as colour?
+
+value <- textArea; textBox $ fmap (++ "!") value
+ta#i+p{`'!',~i_v`}
+
+todoApp = div>h3{TODO}+todoList{`;: 'hello world'`}+form>label{What needs to
+be done?}+input+button
+todoList = ul>li$
+todoApp

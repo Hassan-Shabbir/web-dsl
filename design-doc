@@ -356,7 +356,27 @@ NB. for accessing the props such as colour?
 value <- textArea; textBox $ fmap (++ "!") value
 ta#i+p{`'!',~i_v`}
 
-todoApp = div>h3{TODO}+todoList{`;: 'hello world'`}+form>label{What needs to
-be done?}+input+button
-todoList = ul>li$
-todoApp
+NB. React todo app
+class TodoApp extends React.Component { constructor(props) { super(props); this.state = { items: [], text: '' }; this.handleChange = this.handleChange.bind(this); this.handleSubmit = this.handleSubmit.bind(this); } render() { return ( <div> <h3>TODO</h3> <TodoList items={this.state.items} /> <form onSubmit={this.handleSubmit}> <label htmlFor="new-todo"> What needs to be done?  </label> <input id="new-todo" onChange={this.handleChange} value={this.state.text} /> <button> Add #{this.state.items.length + 1} </button> </form> </div>); } handleChange(e) { this.setState({ text: e.target.value }); } handleSubmit(e) { e.preventDefault(); if (this.state.text.length === 0) { return; } const newItem = { text: this.state.text, id: Date.now() }; this.setState(state => ({ items: state.items.concat(newItem), text: '' })); } } class TodoList extends React.Component { render() { return ( <ul> {this.props.items.map(item => ( <li key={item.id}>{item.text}</li>))} </ul>); } } ReactDOM.render( <TodoApp />, document.getElementById('todos-example')); 
+NB. svelte
+<script> let newItem = ''; let todoList = [{text: 'Write my first post', status: true}, {text: 'Upload the post to the blog', status: false}, {text: 'Publish the post at Facebook', status: false}]; function addToList() { todoList = [...todoList, {text: newItem, status: false}]; newItem = ''; } function removeFromList(index) { todoList.splice(index, 1) todoList = todoList; } </script> <input bind:value={newItem} type="text" placeholder="new todo item.."> <button on:click={addToList}>Add</button> <br/> {#each todoList as item, index} <input bind:checked={item.status} type="checkbox"> <span class:checked={item.status}>{item.text}</span> <span on:click={() => removeFromList(index)}>❌</span> <br/> {/each} <style> .checked { text-decoration: line-through; } </style> 
+
+NB. my design for todo app
+todoList = ul>li$+li{`z , form_v`}
+NB. or perhaps it should be like this?: todoList = ul>li$form_v which would append the value to the end of the list items
+]todoApp = div>h3{TODO}+todoList{`;: 'hello world'`}+form>label{What needs to be done?}+input+button{Add `>:#input`}:s
+NB. dense version (10% the size of the react version)
+div>h3{TODO}+(ul>li$form_v)+form>label{What needs to be done?}+input+button{Add #`>:#input`}:s
+
+NB. reactive component attached to input field
+div>h3{TODO}+(ul>li$form_v)+p{Currently entered: `input`}+form>label{What needs to be done?}+input+button{Add #`>:#input`}:s
+
+
+
+
+
+
+
+
+
+

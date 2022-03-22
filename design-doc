@@ -10,6 +10,7 @@ em '.foo#bar>ul>2*li' NB. create html based on expression
  </ul>
 </div>
 
+NB. apply boxes on the right side (consistent with J and allows right-parened expressions)
 (;: 'Hi didi') ap 'ul>*li{$}' NB. apply boxed array, looping on the starred subtree (not subexpression)
 (;: 'Hi didi') ap 'ul>*li$'   NB. simplified syntax
 <ul>
@@ -17,7 +18,7 @@ em '.foo#bar>ul>2*li' NB. create html based on expression
 	<li>didi</li>
 </ul> 
 
-(;: 'h1 p1 h2 p2') ap '*.page>h2$+p$'
+(;: 'h1 p1 h2 p2') ap '*.page>h2$+p$' 
 <div class="page">
 	<h2>h1</h2>
 	<p>p1</p>
@@ -27,6 +28,7 @@ em '.foo#bar>ul>2*li' NB. create html based on expression
 	<p>p2</p>
 </div>
 
+NB. get value from J
 em 'h1{Hello $name}' ] name =: 'Hassan Shabbir'
 <h1>Hello Hassan Shabbir</h1>
 
@@ -53,7 +55,7 @@ em 'btn[clk=0:$v+1]{Clicked $v time$((v>1)?:'s')!}' NB. ?: is an if expression
 <script>let v = 0;</script>
 <button click="() => v = v+1">Clicked {v} time{v > 1 ? 's' : ''}!</button>
 
-NB. $ extended to loop over boxed matrixes; uses title case for props; as key-value pairs (also useful for styles)
+NB. $ extended to loop over boxed vectors; uses title case for props; as key-value pairs (also useful for styles)
 em 'ul>*li{$obj}' ] obj =: ;: 'name hassan age 23 job soft-dev city pickering'
 <ul>
   <li>Name: ${name}</li>
@@ -362,15 +364,15 @@ NB. svelte
 <script> let newItem = ''; let todoList = [{text: 'Write my first post', status: true}, {text: 'Upload the post to the blog', status: false}, {text: 'Publish the post at Facebook', status: false}]; function addToList() { todoList = [...todoList, {text: newItem, status: false}]; newItem = ''; } function removeFromList(index) { todoList.splice(index, 1) todoList = todoList; } </script> <input bind:value={newItem} type="text" placeholder="new todo item.."> <button on:click={addToList}>Add</button> <br/> {#each todoList as item, index} <input bind:checked={item.status} type="checkbox"> <span class:checked={item.status}>{item.text}</span> <span on:click={() => removeFromList(index)}>❌</span> <br/> {/each} <style> .checked { text-decoration: line-through; } </style> 
 
 NB. my design for todo app
+NB. var z is used to refer to current value of item
 todoList = ul>li$+li{`z , form_v`}
 NB. or perhaps it should be like this?: todoList = ul>li$form_v which would append the value to the end of the list items
 ]todoApp = div>h3{TODO}+todoList{`;: 'hello world'`}+form>label{What needs to be done?}+input+button{Add `>:#input`}:s
 NB. dense version (10% the size of the react version)
 div>h3{TODO}+(ul>li$form_v)+form>label{What needs to be done?}+input+button{Add #`>:#input`}:s
 
-NB. reactive component attached to input field
-div>h3{TODO}+(ul>li$form_v)+p{Currently entered: `input`}+form>label{What needs to be done?}+input+button{Add #`>:#input`}:s
-
+NB. reactive component attached to input field; form values submitted on submit
+div>h3{TODO}+(ul>li$form_v)+p{Length of text entered: `#input`}+form>label{What needs to be done?}+input+button{Add #`>:#input`}:s
 
 
 

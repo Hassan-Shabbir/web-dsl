@@ -377,4 +377,30 @@ div>h3{TODO}+(ul>li$form_v)+form>label{What needs to be done?}+input+button{Add 
 NB. reactive component attached to input field; form values submitted on submit
 div>h3{TODO}+(ul>li$form_v)+p{Length of text entered: `#input`}+form>label{What needs to be done?}+input+button{Add #`>:#input`}:s
 
+NB. * seems to be quite useless when defining expressions, perhaps it should be removed, eg: 
+ul>li*3; li[0] = {foo}; li[1] = {bar}; li[2] = {baz}
+NB. compared to
+ul>li{foo}+li{bar}+li{baz}
+NB. or using emmets implied tags
+ul>{foo}+{bar}+{baz}
 
+NB. what was the syntax for events again?
+b:c{Click me!}
+NB. or
+b[clk]{Click me!}
+
+NB. linked pages are pages that replace one subtree for another subtree when an event fires in the first subtree
+NB. use & for linking?
+NB. should the linking be like this?
+foo = .page#d>h1{Hello World}+b#a{Click Here}
+bar = .page#b>h1{Hello, World!}+b#c{Click Here again}
+#a&#b;#c&#d
+NB. or like this?
+foo = .page>h1{Hello World}+b{Click Here}
+bar = .page>h1{Hello, World!}+b{Click Here again}
+foo&bar
+NB. actually this can be replaced by the routes syntax, such as the following
+NB. how should other aspects be dealt with such as :c or the get/foo expanded syntaxes?
+NB. routes defined similar to component definition (but prefixed with /)
+/foo = h1{Hello World}+b:/bar{Click Here} NB. on default event (click) route to /bar
+/bar = h1{Hello, World!}+b:/foo{Click Here again}

@@ -404,3 +404,60 @@ NB. how should other aspects be dealt with such as :c or the get/foo expanded sy
 NB. routes defined similar to component definition (but prefixed with /)
 /foo = h1{Hello World}+b:/bar{Click Here} NB. on default event (click) route to /bar
 /bar = h1{Hello, World!}+b:/foo{Click Here again}
+
+NB. every element should be dynamic by default and only static when explicitly stated
+
+NB. concat two values of input fields
+NB. change a_v style values to instead be aV (saves one char typing and one visual character spot as well)
+ta#a+ta#b+p`aV,bV`
+
+NB. count the total of increments and decrements
+NB. bacon.js
+var minusOnes = $('#minusOne').asEventStream('click').map(-1); var plusOnes = $('#plusOne').asEventStream('click').map(1); var score = minusOnes.merge(plusOnes).scan(0, (sum, value) => sum + value); score.assign($('#score'), 'text')
+NB. my way
+b#a{-1}+b#b{+1}+p{Total: `(#b)-#a`} NB. shouldn't the interactivity (and its type [hover, click]) be noted on the b(utton)?; is it possible to remove giving things ids?
+
+NB. add numbers
+NB. bacon.js
+function inputVal(ev) { return $(ev.currentTarget).val() }; function isNumber(n) { return n > 0 }; var a = $('#a').asEventStream('keyup').map(inputVal).map(parseInt).filter(isNumber).toProperty(0); var b = $('#b').asEventStream('keyup').map(inputVal).map(parseInt).filter(isNumber).toProperty(0); function sum(arg1, arg2) { return arg1 + arg2 }; var answer = a.combine(b, sum); answer.assign( $('#answer'), 'val');
+NB. my way
+in#a+p{ + }+in#b+p{ = `a_v+b_v`} NB. use i (or tb ta?) followed by type (nat, int, decimal, date, text; text is default for 'i'nput); only fires when valid term of type
+
+NB. implicit functions attached to html tags
+p{`1+1`} NB. set body of p to 2
+p`1+1` NB. shorthand backticks (``) defaults to body
+p:`log 1+1` NB. colon (:) uses default interaction for tag (hover for p tags); logs on hover
+p:h`log 1+1` NB. same as above
+p:hover`log 1+1` NB. same as above
+
+NB. use event streams to get value from ajax calls (see bacon.js)
+
+NB. all events are dropped if they occur before the latest event (see bacon flatmaplatest and frp semantics)
+
+NB. apparently behaviours cannot have events embedded!? (since they are continuous?) https://www.haskellcast.com/episode/009-conal-elliott-on-frp-and-denotational-design 
+
+NB. create a denotational design for this software
+
+NB. body ({}) must go before click, so the click can modify the body
+b#a{Foo}:{Bar}
+
+NB. add the concept of recursion into the semantics
+b#a{Foo}:{Bar}: = #a NB. the text will be Foo => Bar => Foo => Bar ...
+b{Foo}:{Bar}:_ NB. use _ (or ..) for recurse (or self)?
+
+NB. use click on one element to change another element
+p#a{Change me}
+b{Change above text}:#a = {Changed text}
+
+NB. change background colour to red then blue
+b@bred{Change color}:@bblue
+
+NB. allow arbitrary colors by the following
+p@bddd NB. set background to #dddddd
+p@bdedede NB. set background to #dedede
+
+NB. add animations along with time transformations
+
+NB. should an element be placed when it is defined (like reflex)?
+NB. probably not, otherwise components become more difficult
+

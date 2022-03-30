@@ -56,7 +56,7 @@ em 'btn[clk=0:$v+1]{Clicked $v time$((v>1)?:'s')!}' NB. ?: is an if expression
 <button click="() => v = v+1">Clicked {v} time{v > 1 ? 's' : ''}!</button>
 
 NB. $ extended to loop over boxed vectors; uses title case for props; as key-value pairs (also useful for styles)
-em 'ul>*li{$obj}' ] obj =: ;: 'name hassan age 23 job soft-dev city pickering'
+em 'ul>*li{$obj}' ] obj =: ;: 'Name Hassan Age 23 Job Soft-dev City Pickering'
 <ul>
   <li>Name: ${name}</li>
   <li>Age: ${age}</li>
@@ -64,9 +64,12 @@ em 'ul>*li{$obj}' ] obj =: ;: 'name hassan age 23 job soft-dev city pickering'
   <li>City: ${city}</li>
 </ul>
 
-em 'ul>li{$obj_name}' ] obj =: ;: 'name hassan age 23 job soft-dev city pickering' NB. get prop in object
+em 'ul>li{$obj_name}' ] obj =: ;: 'Name Hassan Age 23 Job Soft-dev City Pickering' NB. get prop in object
 <ul>
   <li>Name: ${name}</li>
+  <li>Age: ${age}</li>
+  <li>Job: ${job}</li>
+  <li>City: ${city}</li>
 </ul>
 
 em 'btn[clk=$v+1]{$v doubled is $d}`v=0:+1;d=v*2`' NB. use `` for scripts; all vars that depend on referenced vars are auto updated

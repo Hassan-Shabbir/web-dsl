@@ -378,10 +378,3 @@ NB. reactive component attached to input field; form values submitted on submit
 div>h3{TODO}+(ul>li$form_v)+p{Length of text entered: `#input`}+form>label{What needs to be done?}+input+button{Add #`>:#input`}:s
 
 
-
-
-
-
-
-
-

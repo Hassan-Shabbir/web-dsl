@@ -461,3 +461,196 @@ NB. add animations along with time transformations
 NB. should an element be placed when it is defined (like reflex)?
 NB. probably not, otherwise components become more difficult
 
+NB. should this be automated, otherwise have it composable and user-defineable
+NB. login component requires sessions
+NB. also include yesod's final destination feature (return to page which caused login)
+/login = login
+
+NB. functional components (n-ary args)
+.card = @bglightblue
+fcomp = .card>h3$$+p$$
+fcomp{Card 1}{Hello}+fcomp{Card 2}{World!}
+
+NB. code sent to the end user is only those features used in the app
+
+NB. include a query language and db within web-dsl
+NB. torel, project, select, rename, crossproduct, equality, union
+NB. guess * is useful again?
+/users = div>ul>li*>$users
+
+NB. use db constraints to define the crud operations allowed for a type of user?
+
+NB. use the following syntax for get and put/post/delete:
+</form = #form>in+in+b
+>/form = `log form`
+
+NB. routes should be like yesod (ie "typesafe")
+NB. the following causes an error since /bar is not defined
+/foo = a[href=/bar]{Click to go to bar}
+/baz = p{This is baz} 
+
+NB. all information for a particular route is optimized in its delivery (perhaps by compiling into one file?)
+
+NB. properly cache js and css files
+
+NB. left side of assignment has urls in the following styles
+/home = p{Hello World!}
+</home = p{Hello World!}
+<:3000/home = p{Hello World!}
+<localhost:3000/home = p{Hello World!}
+<http://www.localhost:3000/home = p{Hello World!}
+
+NB. comments are the following
+// this is a comment
+NB. this is a special comment for specifying other more advanced options (port number etc) 
+/// port=3000 
+
+NB. routes
+/ = a[href=/page1]{Go to page 1!} NB. root page
+/page1 = a[href=/page2]{Go to page 2!}
+/page2 = a[href=/]{Go home!}
+
+NB. be able to send JSON data as well
+/ = `'msg';'hello world'`
+
+NB. prevent XSS (cross site scripting) attacks
+
+NB. scoped css: all styles stay within the component they are defined in
+@bgblue NB. global style, all routes
+/foo = @bgblue NB. global for this route
+bar = @bgblue NB. style only for this component
+
+NB. route variables
+/name/$name = p{Hello `$name`}
+NB. typed route variables
+/name/$name:text = p{Hello `$name`}
+NB. url params (or can this be omitted for simplicity?)
+/name?name=$name:text&age=$age:nat = p{Hello `$name`, aged `$age`.}
+NB. simplified syntax (should there be $ before vars or not?)
+/name?$name:text&$age:nat = p{Hello `$name`, aged `$age`.}
+/name?name:text&age:nat = p{Hello `$name`, aged `$age`.}
+NB. another example
+</users?$sortby = `'sortby';sortby`
+
+NB. allow for routes to send both html and json without creating a parse error
+/ = h1{Message:}+p{Hello World!}
+/ = `'msg';'hello world'`
+NB. actually, have a different route for api (which will send json)
+/     = h1{Message:}+p{Hello World!}
+/api/ = `'msg';'hello world!'`
+
+
+NB. be able to make api requests based on a link
+/api/ = `'msg';'hello world!'`
+/     = h1{Message:}+p{`'msg' get '/api/'`}
+
+NB. create custom syntax for json
+
+NB. use IHP as inspiration for web-dsl: https://ihp.digitallyinduced.com/Guide/your-first-project.html, see also ur/web
+
+NB. what should the db syntax be?
+
+</ = person NB. use the below table for generating the form
+>/person = p{Person created `person`}
+NB. create a table (default type of column to text)
+NB. ? for optional, lots of predefined types, including html types such as color, email, url, etc
+NB. by default, data can only be submitted once all requirements are met
+%person'name,birthday:day,color:color?,email:email,website:url'
+NB. can tables be first-class objects? if yes, use comma (,) to separate the columns (spaces optional)
+NB. types separated by colon (:), optional value denoted by question mark (?)
+person = name, birthday:day, color:color?, email:email, website:url
+
+NB. how should rows be inserted into a table
+NB. use function syntax?
+person{Hassan}{march 11}{blue}{hassan@gmail.com}{c3g.nfshost.com}
+NB. alternate function syntax
+a = person{Hassan;march 11;blue;hassan@gmail.com;c3g.nfshost.com}
+b = person{Maria;january 8;red;maria@gmail.com;fb.nfshost.com}
+a union b
+NB. make types mandatory, then last value with type is last column
+person = name:text, birthday:day, color:color?, email:email, website:url, Hassan, march 11, blue, hassan@gmail.com, c3g.nfshost.com
+
+NB. verify that function syntax and dom element body syntax is compatible
+
+NB. what are the default datatypes in web-dsl?
+NB. ints, nats, floats/doubles (use term used by J), strings
+
+NB. autogen routes based on db tables
+%personCRUD'name,birthday:day,color:color?,email:email,website:url'
+NB. default to CRUD when tables are created
+%person'name,birthday:day,color:color?,email:email,website:url'
+NB. will create the following routes
+>/create/person
+</read/person
+</readlist/person
+>/update/person
+>/delete/person
+
+NB. Maybe values can be represented as an empty list that
+NB. uses the * syntax to loop over; empty list expression being ignored
+NB. without the *, the expression causes an error since it does not exist
+html>head>title^body>*p{Your message was: $$}
+
+NB. look to coffeescript for ideas on how the generated javascript should look like
+
+NB. global styles (eg. below) affect everything, but component styles do not affect other components
+@bgblue
+h1{Hi}
+foo = p@bgred{hi}
+bar = p{hi}
+
+NB. read ways to optimize the delivery and execution of web-dsl
+
+NB. use domfragment to build dom tree, then insert all together into the full dom
+
+NB. use event delegation to decrease the number of event listeners on the page
+.foo>*.bar>p:c`log 'hi'`$$
+NB. turns into
+.foo:c`log baz`>*.bar>p.baz$$
+
+NB. think about accessibility using the w3c docs wcag
+
+NB. try to pre-render all javascript
+
+NB. use < for parent operator since it is the opposite of child (>)
+
+NB. automatically add image discriptions using ai
+
+NB. have a relation/dom query operator
+NB. relational query
+person = name:text, birthday:day, color:color?, email:email, website:url, Hassan, march 11, blue, hassan@gmail.com, c3g.nfshost.com
+NB. TODO
+NB. dom query
+a = .foo>.bar+.baz
+NB. in a, find .baz and replace with .quux
+.quux~.baz?a
+NB. in a, find .baz's parent and replace with .quux
+a = .foo>.bar+.baz
+.quux~.baz<?a
+NB. chaining modifications
+.baz~.foo?.foo~.quux?.quux~.baz<?a
+
+NB. nesting expressions
+p{You can have i{italic} bold{bold} u{underlined} and span{spanned} text}
+
+NB. create jwt tokens for authentication
+
+NB. create plotting library using/similar to d3.js and the plot function in J
+
+NB. other features that could be attempted
+NB. all but first navigations should be instantaneous
+NB. offline and progressive web app mode
+NB. degrade gracefully when javascript is not available
+NB. download only css/js that is required, then download rest in background
+
+NB. use realworld example app to test web-dsl
+
+NB. unused css and js removal and minification
+
+NB. automatically generate sitemaps
+
+NB. output should be semantic
+
+NB. automatically generate swagger (api) description of the generated web app
+
+

@@ -543,6 +543,13 @@ NB. actually, have a different route for api (which will send json)
 NB. be able to make api requests based on a link
 /api/ = `'msg';'hello world!'`
 /     = h1{Message:}+p{`'msg' get '/api/'`}
+NB. or use the query syntax below with the link syntax
+/     = h1{Message:}+p>/api?msg
+
+NB. difference between > and {}?
+NB. literal text body will be {} and > will denote a dom expression
+p{hello world}
+p>span{hi}
 
 NB. create custom syntax for json
 
@@ -623,12 +630,32 @@ NB. TODO
 NB. dom query
 a = .foo>.bar+.baz
 NB. in a, find .baz and replace with .quux
-.quux~.baz?a
+a?.baz~.quux
 NB. in a, find .baz's parent and replace with .quux
 a = .foo>.bar+.baz
-.quux~.baz<?a
+a?.baz<~.quux
 NB. chaining modifications
-.baz~.foo?.foo~.quux?.quux~.baz<?a
+a?.baz~.quux?.quux~.foo?.foo~.baz
+
+NB. json query, retrive value c
+obj = {
+	a: {
+		b: { 
+			c: {}
+		}
+	}
+}
+obj?a?b?c
+NB. or 
+obj?a>b>c
+
+NB. use regex for types or just create a type system?
+nameorage = r`name|age`
+nameorage = :name|age
+/iam/$nameorage:nameorage = p{I am `$1:name`}+p{I am `$1:age` year(s) old}
+NB. or use numbered case split
+/iam/$nameorage:nameorage = p{I am `$1`}+p{I am `$2` year(s) old}
+
 
 NB. nesting expressions
 p{You can have i{italic} bold{bold} u{underlined} and span{spanned} text}
@@ -654,3 +681,168 @@ NB. output should be semantic
 NB. automatically generate swagger (api) description of the generated web app
 
 
+NB. function syntax f(a)(b){c} paren for dom expr and brace for literal
+NB. or allow domexprs as args in {}
+foo = h1$$+p$$
+foo{Hi}(span{hi})
+foo = h1$$+$$
+foo{Hi}(p>span{hi})
+
+NB. keep web-dsl at a very high level, there should only be three parts NB. database layer, logic layer, presentation layer, 
+NB. of which database, local storage, session storage, cookie, url params, ect are all in
+
+NB. can GraphQL be done using a modified relational algebra?
+NB. graphql
+type Human {
+  name: String
+}
+NB. web-dsl equivalent
+human = name:s
+
+NB. graphql
+type Human {
+  id: String
+  name: String
+  homePlanet: String
+}
+NB. web-dsl equivalent
+human = id:s name:s homePlanet:s
+
+NB. graphql
+enum Episode {
+  NEWHOPE
+  EMPIRE
+  JEDI
+}
+type Human {
+  id: String
+  name: String
+  appearsIn: [Episode]
+  homePlanet: String
+}
+NB. web-dsl equivalent
+NB. `` before for constraints,
+NB. in is defined as {{ (<x) e.~ cut y }}
+human = `$3 in 'newhope empire jedi'` id:s name:s appearsIn:Ls homePlanet:s
+
+NB. $num should use 0-indexed vars in currently defining rel
+
+NB. how should escaping be done within ``? either `$ 1` (not `$1` which would refer to $1) to mean $1 in J or `\$1`
+NB. the second works better if other things also need to be escaped
+NB. I also hate the look of 'O''connell' => O'connell
+
+NB. take another look at the Links and the ur/web programming languages
+NB. also look at tablaM which is a relational programming language
+NB. also look at sligh which converts essential logic into a full-stack web app and has a certifying source-to-source compiler
+
+NB. use overloading to decrease the number of operators that are required (only do it if the op. and op: syntax can be completely removed from my lang?)
+NB. 1 * 2 and student * teacher (relational join)
+
+NB. forms can be automatically generated based on a relational expression
+human = id:i name:s location:s
+NB. would create a form with three inputs based on that schema
+
+NB. having a haskell-like type system will help marshalling data and entering data into the system correctly (see above form generation)
+
+NB. use type in url, then $num in the body
+/foo/$i = `41 + $0`
+
+NB. split code into front-end and backend automatically, see unison for distributed computations
+
+NB. should sum types be added? it would add complexity and verboseness
+NB. shouldn't it be possible to have a terse sum types?
+:b = 0|1 NB. type of bool
+/hungry/$b = ` +&3 \` *&12 $0 ` NB. use gerund ` and the first is used if the first construction is used; this is horrible
+
+NB. what kind of effect system should this language use?
+
+NB. all io functions should use the async functions, and be written the same way as normal J/Haskell
+
+NB. add ranges to the type system
+:w = 1..7
+
+NB. how does K (kdb? q?) do relations?
+
+NB. are maps just relations and/or should the syntax be similar?
+
+NB. add wasm as a potential compilation target
+
+NB. relational expressions are written in the rel lang, then converted into json if and when it is needed
+NB. this would replace graphql (a query lang for json)
+NB. graphql's many-to-many is problematic
+NB. for example, join represent children in json, so a * b * c /= c * b * a because { data: a: { b: { c: {} } } } /= { data: c: { b: { a: {} } } }
+
+NB. function types would be written like the following (if type inference fails or for documentation on function)
+x:r NB. relation type
+x:rr NB. rel -> rel; monadic func
+x:rrr NB. rel -> rel -> rel;  dyadic func
+x:srr NB. string -> rel -> rel
+x:La NB. list of a (may be needed some times, but hopefully not, to keep it array oriented)
+x:Lab NB. [a] -> b
+NB. how would the list type be defined within the language
+
+NB. api endpoints should just be considered global functions, and should be easily accessible through other functions
+/foo/bar = .......
+/foo/baz = /foo/bar
+NB. the syntax of these is way too complicated, should it just use normal function names?
+foo_bar NB. the _ could be used to delineate the parts
+NB. but how would values be passed into the api? would I want to make it difficult or impossible (no leaky abstractions)?
+NB. then this becomes easier
+/foo/bar = .......
+/foo/baz = ` 10 + foo_bar `
+
+NB. values should be passed to the api endpoints as key-value pairs, perhaps like this `cut 'a 10 b 20'`
+NB. there should be a way of accesssing these values
+
+NB. the syntax that is created for this web language is starting to conflict with the J language
+NB. perhaps the languages should start to diverge now?
+
+NB. the whole language should be redesigned so that it goes from the abstract to slightly less
+NB. based on what types of things are done using HTML+CSS+JS 
+NB. see program refinements
+
+NB. dyadic * can be used in the dom expr lang to account for empty arrays
+NB. empty string and Nothing value are treated as emptiness as well
+NB. equilvalent to `if (y == null || y.length == 0 || y == '' || y == Nothing) { x } else { c_1; foreach (e in y) { e }; c_2}`
+(h1{Log in}+p{It seems you aren't logged in yet})*div>h1{Welcome Back!}+p$
+
+NB. allow array left hand side for assignments
+student teacher = sid sname * tid tname
+NB. turns to
+student = sid sname
+teacher = tid tname
+student_teacher_join = sid tid
+
+NB. the eval direction should be the same as J, ie. right to left
+NB. even though dom exprs (div>p) might be written left to right, it can be thought of as wrapping everything to its right
+
+NB. the UI should always show an indicator if an api call is taking too long processing in the background
+
+NB. main features of graphql: single (data backend) endpoint, wraps both sql and nosql databases, data efficient
+
+NB. what is the difference between symbols and variables in J
+
+NB. should all api endpoints return html or html+rel?
+NB. perhaps rel when called, and html+rel when viewed by the browser
+
+NB. types are rank polymorphic using leading axis theory
+NB. so [a] -> a == [[a]] -> [a]
+
+NB. use the types to generate (selenium if required) test cases using property based testing (like quickcheck)
+NB. somewhat similar to sligh, but this would allow for further changes of the transpiled/compiled program
+NB. while ensuring components built with web-dsl would not break
+
+NB. auto generate swagger docs
+
+NB. use NB. for comments and NB: for docs, rather than the previous // and ///
+NB. example for writing docs for the database
+NB: $name lives at $location
+person =: name location, 'hassan' 'pickering'
+NB: $0 lives at $1
+person =: name location, 'hassan' 'pickering'
+NB: $ lives at $
+person =: name location, 'hassan' 'pickering'
+
+NB. allow nullable types within the rel lang by using haskell's maybe monad (for elegant chaining)
+
+NB. all javascript features in the frontend should gracefully degrade when js is not available

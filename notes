@@ -1,6 +1,6 @@
-Define a web server/client DSL:
-use an emmet-like language for writing html-expressions along with J
-examples and results written below
+NB. Define a web server/client DSL:
+NB. use an emmet-like language for writing html-expressions, and tailwind for css, and J for JS
+NB. examples and results written below
 
 em '.foo#bar>ul>2*li' NB. create html based on expression
 <div id="bar" class="foo">
@@ -812,6 +812,14 @@ NB. turns to
 student = sid sname
 teacher = tid tname
 student_teacher_join = sid tid
+studentTeacher = sid sname * tid tname
+NB. or perhaps this makes more sense
+studentTeacher = sid sname * tid tname
+NB. turns to
+student = sid sname
+teacher = tid tname
+student_teacher_join = sid tid
+studentTeacher = sid sname * tid tname NB. as above!
 
 NB. the eval direction should be the same as J, ie. right to left
 NB. even though dom exprs (div>p) might be written left to right, it can be thought of as wrapping everything to its right
@@ -826,7 +834,7 @@ NB. should all api endpoints return html or html+rel?
 NB. perhaps rel when called, and html+rel when viewed by the browser
 
 NB. types are rank polymorphic using leading axis theory
-NB. so [a] -> a == [[a]] -> [a]
+NB. so [a] -> a => [[a]] -> [a]
 
 NB. use the types to generate (selenium if required) test cases using property based testing (like quickcheck)
 NB. somewhat similar to sligh, but this would allow for further changes of the transpiled/compiled program
@@ -846,3 +854,124 @@ person =: name location, 'hassan' 'pickering'
 NB. allow nullable types within the rel lang by using haskell's maybe monad (for elegant chaining)
 
 NB. all javascript features in the frontend should gracefully degrade when js is not available
+
+NB. the types of names are allowed, pascal case, camel case, snake case
+NB. actually use camel case all the time, but generate the url based on it if it is global
+NB. fooBar =: ...... turns to /foo/bar api endpoint if it is a function
+NB. fooBar =. ...... turns to fooBarV, fooBarE if it is a constant
+NB. index.html turns to /index.html
+
+NB. to have a complex syntax for values, require a space between values when they are of the complex syntactic type
++/i.10 NB. valid
++/ /foo NB. valid
++//foo NB. invalid, will be parsed as +// foo, whatever that means
++/ / NB. then this would mean the sum of the return value of the call to the root api endpoint?
+
+NB. why does #a in {`#a`} mean events, while the syntax above allows for complex syntax for endpoints and that #a is clear that the var referenced is an id.
+NB. since using just `a` makes it difficult to know where that var is coming from, and so there needs to be a a_id_ group (see nuvoc for name)
+NB. perhaps using #a would be clearer, but it would also make it more verbose
+
+NB. use session types to communicate between the client and server
+NB. can this be automated, since the default should send data based on where that data originates
+NB. for example, form data would go to the server, while api endpoints would send data to the client
+
+NB. use haskell's types to give a simplified abstraction over REST apis
+NB. for example, sending values of 'Maybe a' would decompose into 'a' if it is 'Just a' or give the proper 400s error code to the client
+NB. see webmachine's decision tree for an example
+NB. also take a look at servant
+
+NB. allow definitions to be like this, to mean an unimplimented endpoint giving error code 500
+/foo = _.
+/foo NB. just by itself on a line will send an api request to /foo
+
+NB. servant has authentication (see basic authentication on wikipedia)
+/about NB. public
+student@/courses NB. only student role permitted to access courses
+
+NB. flesh out the details regarding roles, for example does it create relations in the db?
+
+NB. add regex as a type; but should it be within strings or outside?
+
+NB. what is the correct ratio of using things like regex as literals versus as strings?
+
+NB. see links paper: Secure Compilation of a Multi-Tier Web Language
+NB. from paper: A new class of multi-tier languages enables developers to mix client, server and database source code by shifting the burden of
+NB. code and data partitioning to the compiler. LINKS is a strongly typed, multi-tier, functional programming language for the web
+NB. (Cooper et al. 2006). From a single source file, the compiler gen- erates code for the different tiers of the web application: the back-
+NB. end database, the web server and the client front-end, ensuring that all data is stored either on the client side or in the database.
+
+NB. syntax for multiple arguments
+mymacro{foo;bar} NB. ambigious, since the ; is part of a literal syntax
+mymacro{foo`;`bar} NB. doesn't really mean anything
+{foo}mymacro{bar} NB. perhaps the best option!
+
+NB. am I just creating another Links, but with better syntax!?
+
+NB. printing the output of any expression gets html-escaped, and all url-escaped (%20, etc) are decoded before being passed to the program
+NB. p{<} => p{&lt;} and the same for code in inputs and from the user, it will never be evaled without being encoded to remove any potential meanings
+
+NB. links
+/foo = p{hi}
+/bar = a[href=/foo]{Go to Foo}
+
+NB. each channel created is typed and all data marshalling happens automatically
+
+NB. channel syntax
+createchannel cut 'client:d db:r'
+'client' send p{hi}
+'db' send student * teacher
+
+NB. specifying relation types
+db:r = sid sname * tid tname 
+db:(i s i s) = sid sname * tid tname 
+db = sid:i sname:s * tid:i tname:s          NB. the original turns out to be the shortest
+
+NB. compare ur/web to web-dsl
+table room : { Id : int, Title : string }
+table message : { Room : int, When : time, Text : string }
+room = id:i title:s
+message = room:i when:t text:s
+
+NB. apparently regular expression types are actually a thing! See Regular expression types for XML by Hosoyo et al.
+
+NB. could web development be done with only J types, while adding concepts like session/linear types?
+
+NB. have updatable views; how should this be done?
+NB. it seems that functional dependencies (and integrity constraints) are required for having updatable views
+
+NB. have typed and size indexed arrays
+a:iA3 = 1 2 3 NB. valid
+a:iA3 = 1 2   NB. invalid
+a:(iA2-3) = 1 2   NB. valid
+a:(iA2*3) = i. 2 3   NB. valid
+a:A0-_ = 0$0 NB. valid
+a:A0-_ = i. 10 NB. valid
+a:A0-_ = i. 100000 NB. valid
+a:A1-_ = 0$0 NB. invalid
+a:A1-_ = 1 NB. valid
+a:A1-_ = 1 2 3 4 5 NB. valid
+a:A+ NB. same as a:A1-_
+a:A? NB. same as a:A0-1
+
+NB. use separate type for relations that are ordered or that are limited (first 10 results) https://github.com/agentm/project-m36/blob/master/docs/dataframes.markdown
+
+NB. my concept of writing one program to be split and run everywhere is called tier-less programming
+NB. and the concept of taking one session type and breaking it into multiple distributed computers that are inverses
+
+NB. actually, types systems would probably get in the way of keeping the code concise
+NB. the best way would be to annotate a few things, then have the compiler infer the rest (HM type inference), including potential optimizations (i32 vs i64)
+NB. wasm doesn't even support small integer types, so perhaps there is a limit to what these optimizations can do
+
+NB. could use bifunctor when using sum types
+:foo = bar`baz NB. a foo is either a bar or a baz
+a:foo NB. a has type of foo (is either a bar or a baz); should it be a:bar?
+f a NB. apply f both when it is a bar and when it is a baz
+*&2`+&3 a NB. apply *&2 if it is a bar, otherwise apply +&3 if it is a baz
+
+NB. perhaps sum and product types can be modelled using the current J lang?
+let val_n and val_m be some data, where (type val_n) /= type val_m
+let sum => 
+	left = val;a:
+	right = a:;val
+let prod = val_n;val_m NB. disparate types require boxing
+

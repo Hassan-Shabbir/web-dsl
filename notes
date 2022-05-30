@@ -820,6 +820,11 @@ student = sid sname
 teacher = tid tname
 student_teacher_join = sid tid
 studentTeacher = sid sname * tid tname NB. as above!
+NB. then 
+student teacher = 10 20
+NB. can be used to refer to pattern matching
+NB. though the question remains if it should be haskell style (x:xs) or J style (length errors can occur)
+NB. definitely J style (see below)
 
 NB. the eval direction should be the same as J, ie. right to left
 NB. even though dom exprs (div>p) might be written left to right, it can be thought of as wrapping everything to its right
@@ -969,9 +974,142 @@ f a NB. apply f both when it is a bar and when it is a baz
 *&2`+&3 a NB. apply *&2 if it is a bar, otherwise apply +&3 if it is a baz
 
 NB. perhaps sum and product types can be modelled using the current J lang?
-let val_n and val_m be some data, where (type val_n) /= type val_m
-let sum => 
-	left = val;a:
-	right = a:;val
-let prod = val_n;val_m NB. disparate types require boxing
+NB. let val_n and val_m be some data, where (type val_n) /= type val_m
+NB. let sum => 
+NB. 	left = val;a:
+NB. 	right = a:;val
+NB. let prod = val_n;val_m NB. disparate types require boxing
+NB. based on the following reasoning:
+NB. let a = a | null
+NB. then a * b => 
+NB. 	a * null => a
+NB. 	null * b => b
+NB. 	=> a | b
+
+NB. hand-crafted version (lol)
+NB: $ lives at $
+NB. auto-generated version
+NB. using the following example from chris date
+NB. is_entity  ( SNO ) AND
+NB. has_SNAME  ( SNO , SNAME ) AND
+NB. has_STATUS ( SNO , STATUS ) AND
+NB. has_CITY   ( SNO , CITY ) AND
+NB. CITY = 'London'
+NB: Entity $ has location $
+person =: name location, 'hassan' 'pickering'
+NB. in the following example all keys are considered part of the entity
+NB: Entity $ and $, has course $
+teaches =: #studentId #teacherId course, 'hassan' 'john' 'cs101'
+
+NB. should there be special kinds of assignments?
+NB. global vs local, mutable vs immutable (default), etc?
+
+NB. allow the use of names rather than symbols for functions, ie. sum => +/
+
+NB. rather than having ad-hoc polymorphism, perhaps rewriting NuVoc for web dev would be best?
+NB. ie., student * teacher => student j. teacher, or perhaps student join teacher
+
+NB. keep the languages as close to J as possible, for example the operator precedence
+NB. eg. the @s in p@red{hi}+p@blue{hey} should be thought of as modifiers on the original dom element, to keep the operator precedence I want
+NB. ie. p => p@red modifies the original dom element to also include some styling, similar to +/@:*/ and +/\
+NB. the same should apply to keys in rel defs: student =: sid# sname such that the # suffix denotes that that col is a key (composite if used multiple times)
+NB. ie. teaches:r =: studentId# teacherId# course
+
+NB. what should something that modifies the same aspects of an element? eg. p@red@blue would this be red or blue? 
+NB. most likely blue, though it could also be a warning/error only if it is applied directly to an element.
+NB. allowed, since the blue and red are operating at different levels of specificity
+@blue
+p@red{hi}
+
+NB. there are three ways of dealing with the relation problem, either nesting is implicit, nesting is explicit, or nesting is forbidden
+NB. implicit
+student join teachers
+NB. explicit, where grouped is an adverb
+student join grouped teachers
+NB. though perhaps explicit should be this way, where j. is join and j: is grouped join
+student j: teachers
+
+NB. why do dom exprs have to have a parent element? can this be added automatically when needed?  p{hey}+p{hi} => div>p{hey}+p{hi}
+
+NB. should dom exprs just be js code that is generated, or should they be considered a parsed string of type dom expr
+
+NB. dom exprs should convert to normal html at compile-time
+
+NB. look at how performant web app libraries are made, such as mithril, stage0, svelete, lit, mobx, and of course vanilla js
+
+NB. nested sql example from leontrolski
+SELECT NESTED { customer.name, customer.email, [ { product.id, product.cost, } ], sum(product.cost) AS total_cost, }
+FROM customer LEFT OUTER JOIN NESTED product USING(customer_id) GROUP BY customer.customer_id
+NB. my version (WIP)
+'id' groupby 'total_cost =: +/cost' extend ('name email' p. customer) j: 'id cost' p. product
+
+
+NB. mithril example
+var root = document.body
+var count = 0
+var Hello = {
+    view: function() {
+        return m("main", [
+            m("h1", {
+                class: "title"
+            }, "My first app"),
+            m("button", {
+                onclick: function() {count++}
+            }, count + " clicks"),
+        ])
+    }
+}
+var Splash = {
+    view: function() {
+        return m("a", {
+            href: "#!/hello"
+        }, "Enter!")
+    }
+}
+m.route(root, "/splash", {
+    "/splash": Splash,
+    "/hello": Hello,
+})
+NB. my version; should nullary functions (perhaps only for url functions) be allowed?
+/hello = main>h1.title{My first app}+b#a{`#a` clicks}
+/splash = a[href=/hello]{Enter!}
+/splash''
+
+NB. an example of a web component; perhaps this can be used to create components that take multiple args?
+<wc-arrow
+	l=150 w=150 rot=20 filled=true>
+</wc-arrow>  
+NB. my style; still needs lots of work, for example what should be the default types (int/string), should boxed arrays be used, should rels be used 
+wcarrow = div>p$+p$+p$+p$
+/foo = wcarrow[150 150 20 1]
+
+NB. the templating model needs to be updated with the nested relational model
+
+NB. component in a dom expr should allow relations as an arg for the attrs
+
+NB. name the attrs of the component for a one-off relation
+
+NB. include fontawesome by default in web-dsl
+
+NB. avoid web components since it uses (is it optional?) a shadow dom
+NB. collisions (eg. in styling) can be avoided by giving ids to selectors ie #foo > ... 
+
+NB. my style updated
+wcarrow[s s s s] = dsv>p$+p$+p$+p$ NB. exactly 4 params where each ss an snteger
+NB. simplified (see url params for details); 4 goes later since it is a modifier; 
+NB. length checks on arrays is probably going to be faster than on matrices; how should $ be referred within {``}?
+wcarrow[s4] = div>p$+p$+p$+p$
+/foo = wcarrow[150 150 20 1] NB. call syntax
+wcarrow[i i s s] = div>p$+p$+p$+p$
+/foo = wcarrow[150;150;'hi';'hello'] NB. boxed (heterogeneous) array, since types are different; unbox list by pattern matching
+NB. boxed array with one nested array; ie a;b;c1 c2 => a;b;c1,.a;b;c2
+wcarrow[i s] = div>p$+p$
+/foo = wcarrow[(i. 3);'hey'] NB. converts to 0 1 2;'hey' => (0;'hey') , (1;'hey') ,: 2;'hey'
+NB. boxed array with more than one nested array (cross product)
+NB. relation as schema to args list; should the $ be the col names?
+wcarrow[student] = div>p$+p$ NB. student was sid sname, ie. i s
+NB. relation expression as schema to args list
+wcarrow[student (sid=tid)j. teacher] = div>p$+p$
+NB. nested relation with one nested array (cross product)
+NB. nested relation with more than one nested array (cross product)
 

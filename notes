@@ -1070,10 +1070,14 @@ m.route(root, "/splash", {
     "/splash": Splash,
     "/hello": Hello,
 })
-NB. my version; should nullary functions (perhaps only for url functions) be allowed?
+NB. my style of creating complex html components
+NB. should nullary functions (perhaps only for url functions) be allowed?
 /hello = main>h1.title{My first app}+b#a{`#a` clicks}
 /splash = a[href=/hello]{Enter!}
 /splash''
+NB. technically this would be preferred and simpler
+/hello = main>h1.title{My first app}+b#a{`#a` clicks}
+/ = a[href=/hello]{Enter!}
 
 NB. an example of a web component; perhaps this can be used to create components that take multiple args?
 <wc-arrow
@@ -1094,8 +1098,8 @@ NB. include fontawesome by default in web-dsl
 NB. avoid web components since it uses (is it optional?) a shadow dom
 NB. collisions (eg. in styling) can be avoided by giving ids to selectors ie #foo > ... 
 
-NB. my style updated
-wcarrow[s s s s] = dsv>p$+p$+p$+p$ NB. exactly 4 params where each ss an snteger
+NB. my style of creating complex html components; updated
+wcarrow[s s s s] = dsv>p$+p$+p$+p$ NB. exactly 4 params where each is a string
 NB. simplified (see url params for details); 4 goes later since it is a modifier; 
 NB. length checks on arrays is probably going to be faster than on matrices; how should $ be referred within {``}?
 wcarrow[s4] = div>p$+p$+p$+p$
@@ -1109,7 +1113,131 @@ NB. boxed array with more than one nested array (cross product)
 NB. relation as schema to args list; should the $ be the col names?
 wcarrow[student] = div>p$+p$ NB. student was sid sname, ie. i s
 NB. relation expression as schema to args list
-wcarrow[student (sid=tid)j. teacher] = div>p$+p$
+wcarrow[studentTeacher] = div>p$+p$
 NB. nested relation with one nested array (cross product)
 NB. nested relation with more than one nested array (cross product)
+
+NB. set global settings as either of these two ways
+NB. a special comment at the top of the file
+NB: foo=bar font=serif
+NB. or as a global setting
+@serif
+
+NB. use system fonts by default rather than web fonts, unless explicitly specified
+
+NB. dark mode should properly invert colors such that dark on bright becomes bright on dark
+
+NB. @c for center x y, @cx for center x, @cy for center y, @c* for foreground colour
+
+NB. attributes for html components must exist
+foo[style=color:red] = .... NB. since style is a normal attr, it is not transformed, ie. style="color:red"; or should that be only on predefined elems?
+foo[href=/hi] = .... NB. since href is allowed on all elements, it is not transformed (see htmx)
+foo[data=1 2 3] = .... NB. data attr transforms to data-value
+foo[bar=/hi] = .... NB. since bar is not a normal attr, it transforms to data-bar eqivalent in html 
+
+NB. named attrs
+foo[bar:i baz:i] = $bar + $baz
+/hi = div>foo[bar=10 baz=20]
+NB. array attrs (since it is an array oriented lang)
+foo[data:i] = +/data
+/hi = div>foo[data=i.3]
+/hi = div>foo[i.3] NB. simplified
+
+NB. https://latex.vercel.app/ for latex style (seems useful for J programmers)
+
+p@cr NB. creates a p elem with red color; does this even make sense if it is not sent to the client? or should it be equivalent to / = p@cr, though forbidden?
+p = p@cr NB. redefines p elem to always have the red color
+
+
+
+NB. htmx
+<!-- have a button POST a click via AJAX -->
+<button hx-post="/clicked" hx-swap="outerHTML">
+    Click Me
+</button>
+</ = b[post=/clicked]{Click Me}
+
+NB. or should I just use the dom tree replacement operator (? was it) for it instead (assume it is for now)
+>/clicked = p{You have been clicked!}
+>/clicked = b?p{You have been clicked!} NB. should replacement only work either for current doc and/or previous doc?
+
+NB. use htmx for this as well
+/foo = h1{Hello World}+b:/bar{Click Here} NB. on default event (click) route to /bar
+NB. can be changed to this, though it is slightly more verbose
+/foo = h1{Hello World}+b[href=/bar]{Click Here} NB. on default event (click) route to /bar
+/bar = h1{Hello, World!}+b[href=/foo]{Click Here again}
+
+NB. pattern matching
+a =: ... NB. normal def of either var or func
+a,b =: ... NB. assign b and then do a,b
+(a,b) =: ... NB. compute a 2 (atom/array/matrix on leading axis), assigning the first to a and the second to b
+(a;b) =: ... NB. same as above, though top level must be boxed, and types may be different
+f a =: ... NB. compute, then assign to a, then compute f(a)
+a f b =: ... NB. same as above, though binary/dyadic
+
+NB. send and receive syntax
+send / = ...
+/ = send ...
+NB. this would not be allowed
+/ = send ...
+/ = receive ... NB. / has already been defined
+NB. chained
+/ = receive ... send ...
+/ = receive ... [ send ...
+
+NB. add dead code elimination
+
+NB. automatically add rel=preload (or preconnect if the resource is definitly needed) to all external links
+NB. "Bear in mind that while <link rel="preconnect"> is pretty cheap, it can
+NB. still take up valuable CPU time, particularly on secure connections. This is
+NB. especially bad if the connection isn't used within 10 seconds, as the browser
+NB. closes it, wasting all of that early connection work."
+<link rel="preload">
+<link rel="preconnect" href="https://example.com">
+
+NB. incremental loading of js like qwik if it is faster than bundling all js together
+NB. though perhaps inlining css/js for above-the-fold, then async the rest, but that will make caching more difficult
+
+NB. send the evaled code to the client, along with how to update it if js is enabled
+b#a{+1}+b#b{-1}+p{Total: `(#a)-#b`}
+NB. turns to
+<button id="a">+1</button>
+<button id="b">-1</button>
+<p>Total: <span id="val">0</span></p>
+<script>
+	document.querySelector('#a').addEventListener('click', () => {
+		val = document.querySelector('#val')
+		val.innerText = parseInt(val.innerText) + 1
+	})
+	document.querySelector('#b').addEventListener('click', () => {
+		val = document.querySelector('#val')
+		val.innerText = parseInt(val.innerText) - 1
+	})
+</script>
+
+NB. use push-pull reactive programming (conal elliot and frp) to see how laziness can be implemented
+
+NB. it seems laziness (assuming js-on-demand, given stable internet) can be implemented as the following (from qwik)
+<div on:input="./path-to-input-handler.js">
+	<input value="hello"> <!-- the value "hello" is computed from the component's data store
+</div>
+<script> <!-- basically the only js needed on app startup, which will then pull the required functionality from the server -->
+	for (const event of events) {
+		document.addEventListener(event, e => {
+			const target = e.target.closest(`on:${event}`)
+			if (target) {
+				const jsPath = target.getAttribute(`[on\\:${event}\`)
+				import(jsPath).then(mod => mod.default(e))
+			}
+		})
+	}
+</script>
+
+NB. break both css and js into the following categories: core (used everywhere), above-the-fold, page specific (keep separate if only js can be cached)
+
+NB. progressive web apps seem to be the best option compared to rehydratable/resumable web apps
+NB. since sending data across the network is the slowest compared to doing the computation yourself
+NB. to get the best results with pwa, js should be kept to a minimum
+NB. the biggest issue with pwa will be reconciling between both the server and the client modifying the same parts of the db
+
 

@@ -1240,4 +1240,146 @@ NB. since sending data across the network is the slowest compared to doing the c
 NB. to get the best results with pwa, js should be kept to a minimum
 NB. the biggest issue with pwa will be reconciling between both the server and the client modifying the same parts of the db
 
+NB. should my language use unary/binary rather than monadic and dyadic? It will most likely contain monads, so yes
+NB. and should function and data
+
+NB. J concepts that would be useful in a web programming language (mathematical concepts will be given lower importance compared to web-related concepts)
+NB. the table below will be of the form verb/noun, unary/binary, function name in english (which can be used instead of the ascii symbol version) (or undefined), explaination/notes
+= unary undefined
+= binary equal eq
+=. unary undefined
+=. binary/copula is, perhaps used as im/mutable var, =. immutable should be easier to type, and =. is easier to type, but =: looks nicer (like :=), also name immutable as `is` and mutable as `mut` see =:
+=: unary undefined
+=: binary/copula mut 
+< unary box
+< binary lesser
+<. unary floor
+<. binary lesserOf
+<: unary decrement
+<: binary lesserOrEq, lesserOrEqual is too long of a name
+> unary unbox, open doesn't show the connection between > and <
+> binary greater
+>. unary ceiling
+>. binary greaterOf
+>: unary increment
+>: binary greaterOrEq
+_ noun infinity inf, _ as a prefix to numbers is unchanged (so _1 is the way to write negative numbers)
+__ noun negativeInfinity negInf
+_. noun todo null "undefined"
+_: unary/binary infinite, function which returns _
++ unary undefined
++ binary plus 
++. unary undefined
++. binary or gcd
++: unary double
++: binary notOr
+* unary signum
+* binary times
+*. unary undefined
+*. binary and lcm
+*: unary square
+*: binary notAnd
+- unary negate neg
+- binary minus
+-. unary not
+-. binary less notIn
+-: unary halve half
+-: binary match
+% unary reciprocal
+% binary divide div
+%. unary matrixInverse matInv
+%. binary matrixDivide matDiv
+%: unary squareRoot
+%: binary root
+^ unary exponential
+^ binary power
+^. unary naturalLog natLog ln
+^. binary logarithm log
+^: conjunction do, ^:(_1) would be called undo
+$ unary shape
+$ binary reshape
+$. unary undefined
+$. binary undefined
+$: unary/binary self
+~ unary/adverb duplicate
+~ binary/adverb flip swap
+~. unary unique uniq
+~. binary undefined
+~: unary uniqueIndexes
+~: binary notEqual notEq
+
+
+NB. @: and @ should be swapped
+
+NB. Type systems for array programming from Dex lang seem interesting
+
+NB. look to haskell prelude and base functions for ideas
+NB. J needs an unwords function perhaps this is the best in J?  ; 1 6 2 6 5 { (cut Today), < ' '
+NB. nevermind, unwords =: ;:^:(_1)
+NB. J also has taketo and dropto (similar to Haskell's takeWhile and dropWhile)
+
+NB. allow modifiers on copula and function composition
+NB. `is` and `is mut` as well as `@` and `@~`
+
+NB. compile down to typescript, and if needed, compile the typescript down to js
+
+NB. have the css part be declarative and highlevel (only things that are seen should be written)
+
+NB. make operations available to the user only those that are both correct and efficient, such that all programs are correct and efficient
+NB. similar to how k does things with efficiency; for example ban the use of pixels and instead use percents/ems/rems
+
+NB. using css3 grid's col: 2 / 3; row: 2 / 3; is a lot more verbose than just using cells (at least for default) 
+NB. by placing it at (1,1) (assuming 0-index), for example using the following syntax: .page@lx1y1
+
+NB. do not use css reset, such as normalize.css, since all browsers render things slightly differently (especially when talking about support for everyone)
+NB. instead, provide fallbacks if required
+
+NB. prerequisites for statements in css should be automatically inferred based on their usage
+NB. for example, div@g@lx1y1 (see above) can just be written as div@lx1y1
+
+NB. if a certain functionality that is only provided through css grid in web-dsl is used (which would provide a nice dev experience)
+NB. compile it down to the basic version, such as css grid turning into floats
+
+NB. lazy load (qwik-style) things that are known to not be used by most people, such as share buttons on pages
+
+NB. be able to figure out how to lay images responsively based on the surrounding html
+NB. for example, a background image uses the cover feature (the default) (such as for hero images) then the overlapping text 
+NB. on the left hand side would make it the un-focal point, leaving the part of the image on the right to become the focal point when resizing the page
+
+NB. include dom exprs not only through html components, but also through "includes"
+NB. though concepts like partials and variable (id renaming, etc) need to considered
+foo = div>p{hi}
+bar = foo+p{hey}
+
+NB. should the way to define types be ::? this would make the distinctions clearer in code
+i::i NB. a range has type i, but it could also mean i:: var i
+foo::i NB. new way, foo has type int
+NB. this would also mean that chaining colons together would not be allowed
+
+NB. coercion example from one type to another; var references after @ are resolved first
+foo = p@cred{hi}
+bar = p@foo{hello} NB. use foo's styling to style this paragraph; also makes it clear what var is playing in this expression
+baz = p@cblue{heyah} 
+quux = foo+bar@baz+baz NB. bar is being further overidden with baz's styling
+
+NB. how should fallback in css be done? should it be handled by the system or the user? for example
+div@cblue@cred NB. should this be div { color: blue; color: red; } or { color: red; }?
+
+NB. remove attrs by specifying them as false, not this disgusting way
+NB. "To be clear, the values "true" and "false" are not allowed on boolean
+NB. attributes. To represent a false value, the attribute has to be omitted
+NB. altogether. This restriction clears up some common misunderstandings: With
+NB. checked="false" for example, the element's checked attribute would be
+NB. interpreted as true because the attribute is present."
+
+NB. bidirectional type checking/subtyping seems interesting: https://www.haskellforall.com/2022/06/the-appeal-of-bidirectional-type.html
+NB. this would allow me to add in refinement types and existential qualification while still getting  type inferencing
+
+
+
+
+
+
+
+NOTE: do not forget to fill out the NuVoc table above!!!
 

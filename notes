@@ -1373,11 +1373,67 @@ NB. checked="false" for example, the element's checked attribute would be
 NB. interpreted as true because the attribute is present."
 
 NB. bidirectional type checking/subtyping seems interesting: https://www.haskellforall.com/2022/06/the-appeal-of-bidirectional-type.html
-NB. this would allow me to add in refinement types and existential qualification while still getting  type inferencing
+NB. this would allow me to add in refinement types and existential qualification while still getting type inferencing
 
+NB. be able to do nested pattern matching
+(a;(b c);d) =: ...
+(a;(b;c);d) =: ...
 
-
-
+NB. define values from among rgb[a], hsl[a], hwb. hwb is the best option, since it maps really well to carol tuttle's color system/theory, followed by hsl[a]
+NB. as well, it makes getting lighter and darker colors of a particular color trivial, ie.
+NB. \(h, w, b)
+NB.		-> (0 120 240, w, b) with red (0), green (120), blue (240); choose colors between 0-360* for mixtures 
+NB.		-> (h, w + 15, b) if you want a lighter color
+NB.		-> (h, w, b + 15) if you want a darker color
+NB.
+NB. see https://en.wikipedia.org/wiki/HWB_color_model and especially https://drafts.csswg.org/css-color/#the-hwb-notation for more info
+NB.
+NB. (*technically, hwb is going to be added in css4, and is not currently available, though I can always compile down to the others (see csswg link above))
+NB.
+NB. syntax: hwb(hue whiteness blackness [/ alpha]) NB. optional alpha followed by / such as hwb(0 0 0 / 1) or hwb(0 0 0 / 100%)
+NB. note, w + b <= 100 if w + b > 100 decrease both w and b proportionally until w + b <= 100
+NB.
+NB. perhaps something like this can be used as a simple rule of thumb (though it seems relative values of w and b are more important than specific values),
+NB. hwb(x >20 <20) -> tint
+NB. hwb(x >20 >20) -> tone
+NB. hwb(x <20 >20) -> shade
+NB. hwb(x <20 <20) -> hue
+NB. see wiki diagram for better visualization
+NB.
+NB. use a rgb-hex-like value to quickly define hwb values
+NB. 
+NB. Short form: @c(0-I)(0-A)(0-A)[0-A]
+NB. 0123456789ABCDEFGHI = 19 digits for h; goes up in increments of 19; 0 19 38 57 76 95 114 133 152 171 190 209 228 247 266 285 304 323 342 (next value not needed; 342 + 19 = 361 = 1 ~= 0)
+NB. 0123456789A = 11 digits for w; goes up in increments of 11; 0 11 22 33 44 55 66 77 88 99 (does not include 100; should 99 be 100?)
+NB. 0123456789A = 11 digits for b; goes up in increments of 11; 0 11 22 33 44 55 66 77 88 99 (does not include 100; should 99 be 100?)
+NB. 0123456789A = 11 digits for a (optional); goes up in increments of 11; 0 11 22 33 44 55 66 77 88 99 (does not include 100; should 99 be 100?)
+NB. 
+NB. Long form: @c(0-I*2)(0-A*2)(0-A*2)[0-A*2]
+NB. 0123456789ABCDEFGHI = 19 digits for h; 19 * 19 = 361 => 360 mod 361 => 0-359 is useful, 360 (IH) and 361 (II) are redundant
+NB. 0123456789A = 11 digits for w; 11 * 11 = 121 => 21 nums are redundant
+NB. 0123456789A = 11 digits for b; 11 * 11 = 121 => 21 nums are redundant
+NB. 0123456789A = 11 digits for a (optional); 11 * 11 = 121 => 21 nums are redundant
+NB. 
+NB. examples (nums in degrees/percent)
+NB. @c120 (light orange; 19 22 0) (hwb short form)
+NB. @c1205 (light orange, half transparent) (hwba short form)
+NB. @c9C1814 (peacock blue; 183 19 15) (hwb long form); 183 (9C) = 9 (9) * 19 (digits) + 12 (C); 19 (18) = 1 (1) * 11 (digits) + 8 (8); 15 (14) = 1 (1) * 11 (digits) + 4 (4)
+NB. @c9C181450 (peacock blue, half transparent) (hwb long form)
+NB. 
+NB. color mixing (see above for more):
+NB. short form (add and subtract from current color): @C[_](0-I)[_](0-A)[_](0-A)[[_](0-A)]; eg. @C_200 (subtract 38 hue); @C020 (brighten by 22); @C022 (change to tone)
+NB. long form  (add and subtract from current color): @C[_](0-I*2)[_](0-A*2)[_](0-A*2)[[_](0-A*2)]; eg. @C_200000; @C00
+NB. @C_20_00_00 (max chars 11 to define color mixing)
+NB. 
+NB. max char lengths for different options
+NB. @c000 hwb short
+NB. @c0000 hwba short
+NB. @c000000 hwb long
+NB. @C_0_0_0 hwb mix short
+NB. @c00000000 hwba long
+NB. @C_0_0_0_0 hwba mix short
+NB. @C_00_00_00 hwb mix long
+NB. @C_00_00_00_00 hwba mix long
 
 
 

@@ -1384,11 +1384,14 @@ NB. as well, it makes getting lighter and darker colors of a particular color tr
 NB. \(h, w, b)
 NB.		-> (0 120 240, w, b) with red (0), green (120), blue (240); choose colors between 0-360* for mixtures 
 NB.		-> (h, w + 15, b) if you want a lighter color
+NB.		-> (h, w - 15, b) if you want a less light color
 NB.		-> (h, w, b + 15) if you want a darker color
+NB.		-> (h, w, b - 15) if you want a darker color
 NB.
 NB. see https://en.wikipedia.org/wiki/HWB_color_model and especially https://drafts.csswg.org/css-color/#the-hwb-notation for more info
 NB.
-NB. (*technically, hwb is going to be added in css4, and is not currently available, though I can always compile down to the others (see csswg link above))
+NB. (*technically, hwb is going to be added in the future, and is not currently available/only available on the newest browser versions, 
+NB. though I can always compile down to the others (see csswg link above))
 NB.
 NB. syntax: hwb(hue whiteness blackness [/ alpha]) NB. optional alpha followed by / such as hwb(0 0 0 / 1) or hwb(0 0 0 / 100%)
 NB. note, w + b <= 100 if w + b > 100 decrease both w and b proportionally until w + b <= 100
@@ -1408,9 +1411,9 @@ NB. 0123456789A = 11 digits for w; goes up in increments of 11; 0 11 22 33 44 55
 NB. 0123456789A = 11 digits for b; goes up in increments of 11; 0 11 22 33 44 55 66 77 88 99 (does not include 100; should 99 be 100?)
 NB. 0123456789A = 11 digits for a (optional); goes up in increments of 11; 0 11 22 33 44 55 66 77 88 99 (does not include 100; should 99 be 100?)
 NB. 
-NB. Long form: @c(0-I*2)(0-A*2)(0-A*2)[0-A*2]
+NB. Long form: @c(2*(0-I))(2*(0-A))(2*(0-A))[2*(0-A)]
 NB. 0123456789ABCDEFGHI = 19 digits for h; 19 * 19 = 361 => 360 mod 361 => 0-359 is useful, 360 (IH) and 361 (II) are redundant
-NB. 0123456789A = 11 digits for w; 11 * 11 = 121 => 21 nums are redundant
+NB. 0123456789A = 11 digits for w; 11 * 11 = 121 => 21 nums are redundant; perhaps w <. 100 would be good?
 NB. 0123456789A = 11 digits for b; 11 * 11 = 121 => 21 nums are redundant
 NB. 0123456789A = 11 digits for a (optional); 11 * 11 = 121 => 21 nums are redundant
 NB. 
@@ -1435,7 +1438,368 @@ NB. @C_0_0_0_0 hwba mix short
 NB. @C_00_00_00 hwb mix long
 NB. @C_00_00_00_00 hwba mix long
 
+NB. the name webdsl (not web-dsl) has already been taken (https://github.com/webdsl/webdsl)
+NB. still need to find a good name for my program 
 
+NB. setting margin on x axis shorthand transforms
+margin-left: auto;
+margin-right: auto;
+NB. can be simplified to 
+margin-inline: auto; NB. where inline means x dimension, and block means y dimension
+
+NB. remember that @c @cx and @cy have been moved to @ac @acx and @acy
+
+NB. named colors
+NB. @cx where x is one letter (uppercase or lowercase) which is a shorthand for the names of colors
+NB. the first letter of the color's name is used, ie. red => @cr
+NB. perhaps some of these colors that are color theory/type specific should be removed?
+NB. starred names are those of the primary/secondary/tertiary colors (see link: https://en.wikipedia.org/wiki/HWB_color_model); underscores are incomplete
+NB. color names taken from https://louisem.com/29880/color-thesaurus-infographic and https://www.colorhexa.com/color-names
+NB. *** aqua (cyan blue)
+NB. *** blue
+NB. *** cyan
+NB. daffodil
+NB. eggshell
+NB. *** fuchsia (magenta red)
+NB. *** green
+NB. hazelnut
+NB. ivory
+NB. jade
+NB. khaki
+NB. *** lime
+NB. *** magenta
+NB. navy
+NB. *** orange
+NB. *** purple
+NB. q_________________________________
+NB. *** red
+NB. scarlet
+NB. *** turquoise
+NB. ultramarine
+NB. violet
+NB. walnut
+NB. xanadu
+NB. *** yellow
+NB. z_________________________________
+NB. Ash
+NB. Black
+NB. Chartreuse
+NB. Denim
+NB. Eggshell
+NB. Fire
+NB. Gray
+NB. Honey
+NB. Ice
+NB. Juniper
+NB. K________________________________
+NB. Lavender
+NB. Mauve
+NB. Nickel
+NB. Onyx
+NB. Pink
+NB. Q________________________________
+NB. Rose
+NB. Silver
+NB. Tan
+NB. U________________________________
+NB. Vermillion
+NB. White
+NB. X________________________________
+NB. Yam
+NB. Z________________________________
+
+NB. actually, use one letter for the color, then one letter can be used as a color suffix modifier to lighten/darken, etc.
+NB. @cb[h w b g H W B G] though it seems this model is waaay too lacking in terms of data contained in it (vs color long form above)
+NB. H W B G refer to the more extreme versions of their lowercase counterparts
+NB. perhaps limiting the color range to the color type of the website would help? ie. type 4 web pages would only use hues for the base colors, and a little w b or g if needed
+
+NB. use assemblyscript as the compilation target for my language, which is basically typescript with wasm types
+NB. https://www.assemblyscript.org/ https://www.assemblyscript.org/introduction.html
+NB. use https://github.com/lume/asdom to do dom manipulations, such that a dom expr turns to compile-time operations using web apis understood by asdom compiled to wasm
+NB. actually, apparently dom counts as IO and wasm may be pretty slow at doing things like that (wasm is better at computation); perhaps assemblyscript isn't that great of a compilation target?
+
+NB. background color can be set with @b followed by a color (name, hwb[a] (long|short))
+
+NB. automatically modify the program based on accepted standards. for example, p@cy{hi} would turn to p@cy@bb{hi} so that the text has the proper contrasts (based on wcag web accessibility guidelines)
+
+NB. centering done through logical properties
+NB. margin-{block,inline}-{start,end}
+NB. padding-{block,inline}-{start,end}
+NB. border-{block,inline}-{start,end}-{width,style,color}
+
+NB. dark mode is automatically derived, though it can be set using this syntax: @d followed by a color. @d alone will enable dark mode for that component, which can also be done for the website
+NB. @i can be used to invert the colorscheme (dark -> light; light -> dark) of a component
+NB. the colorscheme that is used is automatically determined based on the users preference
+
+NB. the outputted css should be grouped by type, with values that can conflict in the order that they appear in the file (so that the meaning remains),
+NB. see https://css-tricks.com/poll-results-how-do-you-order-your-css-properties/
+NB. for example p@cr@cb@g{hi} => p { display: grid; color: red; color: blue; }
+
+NB. perhaps values that replace and values that override are different things, for example p@cr@cb => p@cb versus p@displayblock@displaygrid?
+NB. actually, replacable values should not be allowed, and, if needed, all fallbacks are provided by the compiler
+
+NB. actually, leave out session types, and use the compiler to be able to generate simple html/css/js or pwa-style html/css/js
+
+NB. allow type variables (generics) in the type level
+
+NB. look up what html+css+js do wrong so that they can be fixed in my lang
+
+NB. see what BQN (and k) does that I could take from
+
+NB. support unicode functions for all base functions (named functions in z locale do not have to be included) (see my previous project about concealing unicode characters)
+NB. example of a user defined function in unicode; only one unicode character can be used for the name, terminating the function (similar to i. which allows no-space chaining, ie. p:i.)
+NB. the generated code would use a nickname for the unicode code point used, otherwise just something like u29374.
+⋈ =: join
+
+NB. see the color naming system for ideas on how color modifiers should work
+NB. 'What do you imagine “vivid deep blue,” “very dark green,” or “pale light reddish-orange” to look like? These are examples from the Color Naming System
+NB. (CNS) described by Toby Berk and coauthors in a 1982 paper published by IEEE Computer Graphics and Applications, which I proposed CSS adopt in 1996.'
+NB. 'Using two base-colors evenly mixes them; using a splash color mixes them unevenly, with the base color dominating. So, there's a smooth transition from
+NB. red => orangish red => orange red / red orange => reddish orange => orange.'
+NB. 
+NB. BNF of CNS from https://en.wikipedia.org/wiki/Color_Naming_System
+NB. named-color      := achromatic-color | chromatic-color
+NB. 
+NB. achromatic-color := 'black' | 'white' | lightness gray
+NB. gray             := 'gray' | 'grey'
+NB. 
+NB. chromatic-color  := [ tint | shade ] hue | [ lightness | saturation ]? hue
+NB. tint             := 'whitish' | 'pale' | 'rilliant' | 'vivid'
+NB. shade            := 'blackish' | 'dim' | 'deep' | 'vivid'
+NB. saturation       := 'grayish' | 'moderate' | 'strong' | 'vivid'
+NB. lightness        := 'moderate' | 'very'? [ 'dark' | 'light' ]
+NB. hue              := splash-color? base-color | base-color '-' base-color
+NB. base-color       := 'red' | 'orange' | 'brown' | 'yellow' | 'green' | 'blue' | 'purple'
+NB. splash-color     := 'reddish' | 'orangish' | 'brownish' | 'yellowish' | 'greenish' | 'bluish' | 'purplish'
+
+NB. css lab and lch color models and functions seem quite interesting as well, perhaps hwb can be replaced by this?
+
+NB. issues with css that should be fixed in my lang:
+NB. float for designing layouts, font definitions without quotes on the names, display property (replace with logical properties?), too complex and hard to remember (especially layout),
+NB. cascading styles that affect code you don't want affected*, no edge cases, no errors, should be as high-level as possible, flexbox and grid complicated including properties,
+NB. media queries (instead use responsive units, eg. em rem vh vw), poor defaults, too many properties and attributes, use of preprocessors (showing that the base lang is lacking),
+NB. lack of modularity (see cascading), lack of variables**, see preprocessors to learn how to make css better, flex should be a subcase of grid, html+css should be contained in js,
+NB. metaclasses should exist (a class that is a list of other classes), preprocessors add extra compilation step, default styling doesn't look good, aligning items is difficult,
+NB. alignment properties in flexbox should be writing-mode relative
+NB. see https://wiki.csswg.org/ideas/mistakes for more technical issues
+NB. * this can be solved by containing css within an expression to prevent it from affecting others, with reuse as the following: (see https://www.xanthir.com/b4o00 for potential problems)
+foo =: div>p{hi}+p{hello} [ p =: p@cr NB. this will color both p's red, do this at the top-level of the program to affect it in all files
+foo =: div>p{hi}+p{hello}+p@cb{hey} [ p =: p@cr NB. overriding the last p's color to blue; p@cb{hey} => (p@cr)@cb{hey} => p@cb{hey}
+NB. ** can be done like this
+bar =: p@foo{hi} [ foo =: @cr@by NB. see link to * above; all uses of @foo have to be checked at usage site for correctness (ie. properties exist for that element, otherwise error/drop prop)
+
+NB. see how haskell does web page layout
+
+NB. how to do animations using the @ syntax?
+
+NB. see how typescript with jsx (tsx) would fit into a cohesive language
+
+NB. wasp lang seems similar to what I want to do as well, though with a declarative part that hooks into react+js (though react is a bad idea, svelte style is prob best) https://wasp-lang.dev/
+
+NB. should symbols (J term) be used for projecting a column? 
+
+NB. should x and y axis be replaced by length and width (or something else) (logical properties means things may be reversed/flipped)?
+NB. it should be kept the same, but the application would be flipped along the y axis for rtl langs
+
+NB. use css grid by default (even when 1xn or nx1 matrices), and if some feature is only available on flexbox, then use that
+@g4x1 NB. can potentially become flex
+
+NB. there are three types of modifications on a 2d plane: scale, rotate, reflection, translation (align)
+NB. the list of placement modifiers @ align ({top,center,bottom} {left,center,right} | fill | baseline)
+@ac
+@af 
+@ab NB. aligns to the base of letters, not to the bottom
+@atl
+@atc
+@atr
+@acl
+@acc
+@acr
+@abl
+@abc
+@abr
+
+NB. use the repeat minmax auto-fit syntax for all grids, ie. display: grid; grid-template-columns: repeat(auto-fit minmax(200px, 1fr)); 
+NB. auto-fit can be replaced with auto-fill (see docs for more info)
+NB. example in my lang (size 200px to 1fr)
+@g@s200pxt1fr
+NB. which should simplify to (from 200px)
+@g@f200px
+NB. since 1fr is the default max
+@g@gg1em
+
+NB. examples
+@p2rem NB. padding 2 rem
+@m1rem  NB. margin 1 rem
+@sl500px NB. (size large is 500px; max-width: 500px)
+@atc NB. align top center
+
+NB. perhaps fr units should be the default units for grid cell sizes
+
+NB. should box-sizing: border-box; always be enabled?
+
+NB. only use rem in my lang, since em will change sizes based on where it is pasted in (ie. it cannot be used in the html components and behave the same)
+NB. or perhaps (the default?) use rems for each html component, and then use ems for any styling that is related to that component (devtips recommends this)
+NB. or perhaps there should be a scaling modifier?
+NB. em unit is relative to parent, rem unit is relative to the root element
+
+NB. since all functions are of the type :a :a->b :a->b->c, perhaps having the op between each char a function type would be useless,
+NB. instead save that for something else. use a destructor-like syntax to define the types that a function takes.
+NB. must be of the form x functionName y, with optional typing on either/both, with the type of f inferred (ie. f:isb)
+(x:i f y:s) =: x;y
+NB. perhaps use juxtaposition for wrappers, such that abc => a(b(c)) where a and b are wrapper types like List or Maybe, prefixed by effects (see koka)
+(x:i f:Ri y:i) =: x ? y NB. :Ri means that it is a random (list of) integers
+NB. as well, allow types to be defined in the same style
+(x:i :V y) =: :iV:y NB. a length-indexed vector is a type-level nat with an arbitrary type for y 
+
+NB. use \ for escaping in strings, ie. 'my name is \'hassan\''
+
+@a align (the whole grid, ie. @abr@g; called justify-content(hor) and align-content(ver))
+@g grid
+@ga grid align (align all items in the grid; called justify-items(horizontally) and align-items(vertically) in css; place-items shorthand may be helpful)
+@gc grid columns
+@gr grid rows
+@gg grid gaps
+@ggr grid gap rows
+@ggc grid gap columns
+@s span
+@s2x3 (grid item takes up 2 rows, 3 columns)
+
+NB. should I use a layout algorithm for css such as the cassowary layout algorithm (grid style sheets), or something similar? Cassowary is awesome!
+NB. cassowary algorithm (and ccss) is like logic programming (prolog/relational calculus style), the paper introduces inheritance, perhaps I can leave that out?
+NB. perhaps I can use (something similar to?) constraints that compile down to css3? in which case the most important functions will be min, max, minmax, clamp, and probably variables
+NB. another way may be to use a constraint solving language (like ccss or gss) then using a language like prolog/minikanren to compile that down to simple css.
+NB. if I go down this route, I should allow the logic programming aspect of the language to be usable by the end user
+
+NB. https://github.com/wasp-lang/wasp/tree/main/examples/realworld contains thoughts on web dev that I could use to improve my lang
+
+NB. use haskell as the language for the parser and compiler, since many langs are written in it (at least from the academic crowd), and it could even compile down to WAT if needed
+
+NB. the language should allow for an array of html exprs
+
+NB. perhaps using unicode for user-defined functions might be a problem, since then user-defined functions would look different to the built-in ones
+NB. although, J already does this as well, ie. i. vs foo, see growing a language by guy steele https://www.youtube.com/watch?v=_ahvzDzKdB0
+NB. another option would be to do the following: ⋈ =: join =: .... which would define both variants, though the issue still holds for the char. styles, which I would not want the
+NB. users to be able to overwrite, perhaps this issue cannot be fixed?
+
+NB. see http://seriouspony.com/blog/2013/7/24/your-app-makes-me-fat for issues related to cognitive drain regarding choices, such as with configuration files
+NB. "If your UX asks the user to make choices, for example, even if those choices are both clear and useful, the act of deciding is a cognitive drain. And not
+NB. just while they’re deciding. … Even after we choose, an unconscious cognitive background thread is slowly consuming/leaking resources, “Was that the right
+NB. choice?” … If our work drains a user’s cognitive resources, what does he lose?  What else could he have done with those scarce, precious, easily-depleted
+NB. resources? Maybe he’s trying to stick with that diet. Or practice guitar. Or play with his kids."
+
+NB. have an online version of my lang so that people can try it out without having to install anything
+
+NB. the /r/programminglanguages subreddit is great for ideas and learning
+
+NB. use the Ohm editor (https://ohmjs.org/editor/#) to create a basic version of the grammar for testing purposes
+
+NB. remember to take a look at Elm for some ideas as well
+
+NB. perhaps having the eject on each compilation would be problematic, such as variable naming, program structuring, and library selection.
+NB. instead, having the language build everything to a build folder may be the best, while I get started
+
+NB. should I use (A|E)BNF or should I use PEG grammars?
+
+NB. the following works for basic definitions, though probably will need to be exended to allow for modifiers
+(x:i f y:s) =: x;y
+NB. for example:
+(x f u y) =: ... NB. would be used for something like 10 20 30 +/ 10 20 30 
+
+NB. css does have the scale function, so perhaps the em and rem debate becomes irrelevant? ie. foo@sp1.2 (or perhaps foo@sp120)  (scale padding by 1.2x)
+NB. @t for translate, @r for rotate, and @s for scale
+NB. perhaps a non-linear system like the one that is used in tailwind may be useful for constraining values from 0x .. 25x
+NB. no, I think I should stay with a linear system for now
+NB. y = x/10
+0 0
+1 0.1
+2 0.2
+3 0.3
+4 0.4
+5 0.5
+6 0.6
+7 0.7
+8 0.8
+9 0.9
+10 1
+13
+...
+99 10
+
+NB. hover states should be added to each thing that is actionable, by moving the color to the opposite of the background color
+NB. ie. a blue link would turn dark blue on a light background, when hovered, but on a dark background would turn light blue
+
+NB. disabled buttons would be the original color (h), though it will be an achromatic dark gray (w=40,b=60; approx)
+
+NB. using logic programming with constraints on dom element placement seems like a very good idea
+left NB. to the left of the leftmost of element y
+right NB. "  right " rightmost "
+top
+bottom
+centerX NB. both elements will be on the same x axis
+centerY NB. " y axis
+topLeft
+topRight
+bottomLeft
+bottomRight
+within NB. redundant and confusing; used to place elements that are not direct children inside an element
+
+NB. when doing logic/constraint programming = should be called implies or is, though prolog uses :- but I could just use -: right?
+NB. also, dcg notation in prolog is quite beautiful, and that should be preferred (is it higher order functions for logic programming?)
+NB. and dcg could also be combined into a peg grammar / (E|A)BNF grammar for creating langs within my lang
+NB. A basic example of DCGs helps to illustrate what they are and what they look like.
+NB.  sentence --> noun_phrase, verb_phrase.
+NB.  noun_phrase --> det, noun.
+NB.  verb_phrase --> verb, noun_phrase.
+NB.  det --> [the].
+NB.  det --> [a].
+NB.  noun --> [cat].
+NB.  noun --> [bat].
+NB.  verb --> [eats].
+
+NB. compare web development languages and gui frameworks that are used in prolog; as well learn prolog
+
+NB. apparently you can have constraint programming without logic programming (see Oz lang as example)
+
+NB. most likely, css grid can be emulated using linear constraint programming, and non-linear is not required
+
+NB. don't use peg grammar (meaning is first match in grammar), since it conflicts with the usual haskell definition of parser combinators (meaning is list of all possible meanings)
+
+NB. use logic programming along with refinement types to make my quickcheck property-based checking functions (the unicode should be the <-> symbol)
+
+NB. refinement types
+:n = :(i>=0) NB. a natural number is all of the integers greater or equal to zero
+
+NB. use webp for images
+
+NB. if logic programming is used, surely relational calculus should also be supported, right?
+
+NB. having something like hoogle (and aplcart.info) for my language would be nice (and programs like these should be considered along with the language itself)
+
+NB. have a single book that explains the whole language from beginner to advanced user
+
+NB. this result seems really counter intuitive. it seems like incorrect error propagation.
+NB. perhaps this can be formalized using haskell (using Either, Maybe, exceptions?)? 
+   (+/%#) 0
+0
+   (+/%#) 0$0
+0
+   (+/÷≢) 1
+1
+   (+/÷≢) ⍬
+1
+NB. haskell version, which is a lot more sane
+average xs = if length xs == 0
+							then Nothing
+							else Just $ sum xs `div` length xs
+Prelude Text.Parsec> (Just [1,2,3]) >>= average
+Just 2
+Prelude Text.Parsec> (Just []) >>= average
+Nothing
+Prelude Text.Parsec> (Nothing) >>= average
+Nothing
+NB. note that <./ 0$0 => _ and >./ 0$0 => __ is correct
+NB. perhaps error propagation can be done using exceptions, such that if expressions can be removed
+NB. note that this may imply the removal of certain elements (like a filter) which would cause issueswith the dimensions of data (unless a NAN is used)
 
 NOTE: do not forget to fill out the NuVoc table above!!!
-

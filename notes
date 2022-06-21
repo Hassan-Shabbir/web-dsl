@@ -196,6 +196,7 @@ $cta{p{BUY, NOW!}+btn{BUY}} NB. call to action
 
 
 NB. write about what influenced me
+
 parenthesized expressions
 (nav>.logo+.search+.button)+(.body>.page1+.page2+.page3)+(footer>.first+.second+.third)
 eq without expression:
@@ -1167,7 +1168,7 @@ NB. can be changed to this, though it is slightly more verbose
 /foo = h1{Hello World}+b[href=/bar]{Click Here} NB. on default event (click) route to /bar
 /bar = h1{Hello, World!}+b[href=/foo]{Click Here again}
 
-NB. pattern matching
+NB. pattern matching and function declaration
 a =: ... NB. normal def of either var or func
 a,b =: ... NB. assign b and then do a,b
 (a,b) =: ... NB. compute a 2 (atom/array/matrix on leading axis), assigning the first to a and the second to b
@@ -1736,13 +1737,18 @@ left NB. to the left of the leftmost of element y
 right NB. "  right " rightmost "
 top
 bottom
-centerX NB. both elements will be on the same x axis
-centerY NB. " y axis
-topLeft
-topRight
-bottomLeft
-bottomRight
-within NB. redundant and confusing; used to place elements that are not direct children inside an element
+x NB. both elements will be on the same x axis
+y NB. " y axis
+leftx NB. on the x axis and on the left
+rightx
+topy
+bottomy
+topleft
+topright
+bottomleft
+bottomright
+around
+inside
 
 NB. when doing logic/constraint programming = should be called implies or is, though prolog uses :- but I could just use -: right?
 NB. also, dcg notation in prolog is quite beautiful, and that should be preferred (is it higher order functions for logic programming?)
@@ -1800,6 +1806,21 @@ Prelude Text.Parsec> (Nothing) >>= average
 Nothing
 NB. note that <./ 0$0 => _ and >./ 0$0 => __ is correct
 NB. perhaps error propagation can be done using exceptions, such that if expressions can be removed
-NB. note that this may imply the removal of certain elements (like a filter) which would cause issueswith the dimensions of data (unless a NAN is used)
+NB. note that this may imply the removal of certain elements (like a filter) which would cause issueswith the dimensions of data (if static shapes of data is used) (unless a NAN is used)
+NB. perhaps $. can be used for haskell's monadic bind? (looking like haskell $ function application) (though it will conflict with $ for shape and $: self) (or perhaps it should be automatic? then function application would be done in a monad, or if none makes sense, the identity monad could be used)
 
-NOTE: do not forget to fill out the NuVoc table above!!!
+NB. trees should be implemented using arrays, similar to how Aaron Hsu has done it in his compiler, though with the usage style of haskell for defining and manipulating them
+
+NB. probably switch #. (from base 2) and #: (to base 2) since generally you go from "to base 2" then "from base 2"; though think carefully before doing it
+
+NB. if using parsec, a basic file-reading parser is available from https://github.com/JakeWheat/intro_to_parsing/blob/master/ParseFile.lhs
+
+NB. use the language server protocol (lsp) for editor integration for the language (basically all programming text editors support it: (neo)vim, emacs, atom, sublime, vs code, eclipse, visual studio)
+
+NB. reason for using dependant types: "Dependent types are actually simpler from a programming language design standpoint. For example, you get generics for free, whereas otherwise you'd have to build that as a whole separate feature. And you don't need to invent a whole separate syntax for types vs. terms—with dependent types, you can just unify them into a single term language. Also, I have to say, I love having the ability to prove arbitrary theorems that I'm interested in within my program. That alone is a killer feature."
+
+NB. perhaps dependant types with my language could be used for optimization, correctness, etc. This would be helpful in converting the small set of primitives in J to their dependantly typed versions, which would allow for combining them in easy ways. See idris2 and agda for an example
+
+NB. if using dependant types, use variables that start with a capital for types
+
+NOTE: do not forget to fill out the NuVoc table above

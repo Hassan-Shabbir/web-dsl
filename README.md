@@ -88,11 +88,24 @@ J allows a user to quickly write programs using trains which are two or three fu
 For example, this is how you would write the average function using a fork (three functions in a row):
 ```
 avg  =:  +/ % #
+
+sum  =:  +/
+divide  =:  %
+length  =:  #
+
+averageTacit  =:  sum divide length
+averageExplicit  =:  ((sum y) divide (length y))
 ```
 
 And this is how you would check if a (string or numeric) array is a palindrome using a hook (two functions in a row):
 ```
 pal  =:  -: |.
+
+match  =:  -: 
+reverse  =:  |.
+
+palindromeTacit  =:  match reverse
+palindromeExplicit  =:  (y match (reverse y))
 ```
 
 ## SQL dsl
@@ -123,7 +136,7 @@ Route variables:
 ```
 
 ## Concise
-Most programming languages (except for React with JSX) force you to write something like this (example from Mithril docs):
+Most programming languages (JSX is somewhat better) force you to write something like this (example from Mithril docs):
 ```
 var root = document.body
 var count = 0
@@ -156,6 +169,27 @@ When really all of that functionality can be written in only 2 lines of simple c
 ```
 /hello = main > h1.title{My first app} + b#a{`#a` clicks}
 / = a[href=/hello]{Enter!}
+```
+
+Another example, this time with Haskell, using Reflex (which I actually love):
+```
+{-# LANGUAGE OverloadedStrings #-}
+import Reflex.Dom
+
+main :: IO()
+main = mainWidget $ do
+  el "h1" $ text "Welcome to Reflex-Dom"
+  el "div" $ do
+    el "p" $ text "Reflex-Dom is:"
+    el "ul" $ do
+      el "li" $ text "Fun"
+      el "li" $ text "Not difficult"
+      el "li" $ text "Efficient"
+```
+
+Which is really just:
+```
+/ = h1{Welcome to Reflex-Dom} + div > p{Reflex-Dom is:} + ul > li{Fun} + li{Not difficult} + li{Efficient}
 ```
 
 ## Want to learn more?

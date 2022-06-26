@@ -195,7 +195,7 @@ $footer{.a}{.b}{.c} or as $footer{.a+.b+.c}
 $cta{p{BUY, NOW!}+btn{BUY}} NB. call to action
 
 
-NB. write about what influenced me
+NB. write about what influenced me or the things that were my inspiration/sources
 
 parenthesized expressions
 (nav>.logo+.search+.button)+(.body>.page1+.page2+.page3)+(footer>.first+.second+.third)
@@ -1823,4 +1823,102 @@ NB. perhaps dependant types with my language could be used for optimization, cor
 
 NB. if using dependant types, use variables that start with a capital for types
 
+NB. use '...' for previous expression when in the repl
+
+NB. add holes in the language like haskells _ or _a on the rhs of an equation
+
+NB. write the expressions typed in the repl into a file using a single command
+
+NB. how does reactive programming work with an immutable language?
+
+NB. perhaps the name for the language should end in script? (javascript, purescript, coffeescript, etc.)
+
+NB. how should database migrations work?
+
+NB.	saving a value to local storage should be as simple as adding D: before the expression (or D. if you want to save to a db).
+NB. for example: 
+button#b{Click me!}+p{You clicked the button `D: #b` times!}
+
+NB. see https://github.com/ollef/sixten for how to do unboxed types and low-level optimizations
+
+NB. see https://mercurylang.org/ for how to do a logical/functional programming language
+
+NB. have a type-level language similar to the value-level language, perhaps something like a tacit/invisible-modifier language
+NB. perhaps types could be thought of as sets and then manipulations, such as refinements, would be the restrictions on the sets
+NB. how should refinements be written
+i@:>&0@:<&10
+i 0 10 NB. where restrictions are function arugments
+NB. although function application is more like functors/monads, ie. Monad : * -> *, and Monad Int : *
+
+NB. use <-> (checkEq) for quickcheck, and use -: (or perhaps =) for provable equality
+
+NB. perhaps using css isolation in blazor would be useful in creating html components
+h1@cb{hi} ==> h1[component2358032]@cb{hi} NB. where component2358032 is an html attribute used to constrain the application of the css
+
+NB. take a look at hyperscript https://hyperscript.org/
+
+NB. embedding scripts as dynamically generated attributes of the html tag
+b#a@`('.text-xl';'.text-lg'){~ 2|#a`{Toggle the class="text-xl" on me on click}
+
+NB. use typed inputs, rather than a new name for each input of a different type, 
+ii NB. previous style
+i:i NB. current style
+
+NB. pattern matching should be extended to the more unusual cases
+(a) =: i. 10 NB. top-level of the shape must be 1, otherwise it will give an error
+() =: smoutput 'goodbye' [ smoutput 'hello' NB. composed using haskell's monads (IO ()), and run, with an empty array as the result
+
+NB. perhaps recursive functions could be written like this?
+NB. recurse decreasing y until left functions's base case (mempty value for the monoid) is reached, accumulating values by the left function
+factorial =: 1: ` (* $:@<:) @. * NB. check sign (*) use this value as index into functions 1:`(*$:@<:) if 0 then 1: 0 else n * factorial (n-1) 
+*$:<:
+
+
+
 NOTE: do not forget to fill out the NuVoc table above
+
+
+NB. Grammar (use https://ohmjs.org/editor/ to edit and save)
+DomDSL {
+    Assignment = ((Variable "=")? (Expr | ParenExpr))?
+    
+    Variable = URL | Identifier
+    URL = "/" ("a".."z" | "A" .. "Z" | "/")*
+    Expr = (Element Id? Class* Attribute? Style* Body?) (Op (Expr | ParenExpr))?
+    ParenExpr = "(" Expr ")" (Op (Expr | ParenExpr))?
+    
+    Op = ">" | "+"
+    Body = "{" Text "}"
+    Attribute = "[" (Attr "=" Value)+ "]"
+    
+    Attr = "href"
+    Value = URL
+    
+    Style = "@" Text
+    
+    DomElem = Element Id? Class*
+    Element = Identifier
+    Class = "." Identifier
+    Id = "#" Identifier
+    
+    Identifier = ("a".."z") ("a".."z" | "A" .. "Z")*
+    Text =  ("a".."z" | "A" .. "Z")*
+}
+NB. tests
+div
+p
+p#
+p#val
+p#foo.bar.baz
+myVar = p#fooBar
+div>p
+div>p+p
+p{foo} + p{bar}
+/foo/bar/baz = div>p
+/bar = p{This is bar}
+/foo = a[href=/bar]{Click to go to bar}
+p@cyellow@bblue{Hello world}
+(div>p)+(div>p)
+div@g2x2
+p[title="Hello world"]
+img[src=google.com alt="an image"]

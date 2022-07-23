@@ -1246,11 +1246,11 @@ NB. and should function and data
 
 NB. J concepts that would be useful in a web programming language (mathematical concepts will be given lower importance compared to web-related concepts)
 NB. the table below will be of the form verb/noun, unary/binary, function name in english (which can be used instead of the ascii symbol version) (or undefined), explaination/notes
-= unary undefined
+= unary UNDEFINED
 = binary equal eq
-=. unary undefined
+=. unary UNDEFINED
 =. binary/copula is, perhaps used as im/mutable var, =. immutable should be easier to type, and =. is easier to type, but =: looks nicer (like :=), also name immutable as `is` and mutable as `mut` see =:
-=: unary undefined
+=: unary UNDEFINED
 =: binary/copula mut 
 < unary box
 < binary lesser
@@ -1268,15 +1268,15 @@ _ noun infinity inf, _ as a prefix to numbers is unchanged (so _1 is the way to 
 __ noun negativeInfinity negInf
 _. noun todo null "undefined"
 _: unary/binary infinite, function which returns _
-+ unary undefined
++ unary UNDEFINED
 + binary plus 
-+. unary undefined
++. unary UNDEFINED
 +. binary or gcd
 +: unary double
 +: binary notOr
 * unary signum
 * binary times
-*. unary undefined
+*. unary UNDEFINED
 *. binary and lcm
 *: unary square
 *: binary notAnd
@@ -1296,19 +1296,217 @@ _: unary/binary infinite, function which returns _
 ^ binary power
 ^. unary naturalLog natLog ln
 ^. binary logarithm log
-^: conjunction do, ^:(_1) would be called undo
+^: conjunction do apply, ^:(_1) would be called undo
 $ unary shape
 $ binary reshape
-$. unary undefined
-$. binary undefined
+$. unary UNDEFINED
+$. binary UNDEFINED
 $: unary/binary self
 ~ unary/adverb duplicate
 ~ binary/adverb flip swap
-~. unary unique uniq
-~. binary undefined
+~. unary unique uniq nub
+~. binary UNDEFINED
 ~: unary uniqueIndexes
 ~: binary notEqual notEq
 
+
+. unary det determinant, the following can be used ..  .:, though only if other functions don't use it (for example F.:) (.. could be used in the repl to refer to the previous computation)
+. binary matrixProduct, +/ . * this is apparently different to +/@:* or +/@*, at least when the shapes are different of x and y
+{:: unary path, 
+{:: binary leaf, 
+{{ }}
+
+|
+|.
+|:
+:
+:.
+::
+,
+,.
+,:
+;
+;.
+;:
+#
+#.
+#:
+!
+!.
+!:
+/
+/.
+/:
+\
+\.
+\:
+[
+[.
+[:
+]
+].
+]:
+{
+{.
+{:
+}
+}.
+}:
+"
+".
+":
+`
+`.
+`:
+@
+@.
+@:
+&
+&.
+&:
+?
+?.
+?:
+
+
+a.
+a:
+A.
+A:
+b.
+b:
+B.
+B:
+c.
+c:
+C.
+C:
+d.
+d:
+D.
+D:
+e.
+e:
+E.
+E:
+f.
+f:
+F.
+F:
+g.
+g:
+G.
+G:
+h.
+h:
+H.
+H:
+i.
+i:
+I.
+I:
+j.
+j:
+J.
+J:
+k.
+k:
+K.
+K:
+l.
+l:
+L.
+L:
+m.
+m:
+M.
+M:
+n.
+n:
+N.
+N:
+o.
+o:
+O.
+O:
+p.
+p:
+P.
+P:
+q.
+q:
+Q.
+Q:
+r.
+r:
+R.
+R:
+s.
+s:
+S.
+S:
+t.
+t:
+T.
+T:
+u.
+u:
+U.
+U:
+v.
+v:
+V.
+V:
+w.
+w:
+W.
+W:
+x.
+x:
+X.
+X:
+y.
+y:
+Y.
+Y:
+z.
+z:
+Z.
+Z:
+
+NB.
+NB:
+
+assert.
+break.
+continue.
+else.
+elseif.
+for.
+for_ijk.
+goto_lbl.
+label_lbl.
+if.
+return.
+select.
+case.
+fcase.
+throw.
+try.
+catch.
+catchd.
+catcht.
+while.
+whilst.
+
+
+
+
+NB. j. for joins seems good as well
+
+NB. perhaps checkEq (defined later) could use ?: ("is?" "equal") since the : suffix is the suffix for equal
+
+NB. things like *: (binary not-and) could be repurposed for joins, so that ad-hoc polymorphism would not be needed
 
 NB. @: and @ should be swapped
 
@@ -1873,12 +2071,186 @@ NB. recurse decreasing y until left functions's base case (mempty value for the 
 factorial =: 1: ` (* $:@<:) @. * NB. check sign (*) use this value as index into functions 1:`(*$:@<:) if 0 then 1: 0 else n * factorial (n-1) 
 *$:<:
 
+NB. this code prints 'hi' then 'bye' then index error (for some reason), even though the higher order functions should not be run during the first parse.
+(smoutput 'hi')`(smoutput 'bye') @. 0
 
+NB. darklang.com seems like a really cool lang. it is a simplified language for building backend servers, as well as interfacing with other apis
+
+NB. by the way if expressions are written in the following manner (I FINALLY UNDERSTAND IT!!!):
+function_case_0 ` function_case_1 @. expression_which_evaluates_to_an_index
+NB. in haskell-like syntax
+case expression_which_evaluates_to_an_index {
+	0 -> function_case_0
+	1 -> function_case_1
+}
+
+NB. arrays should be allowed to contain functions
+funcs =: (f,g,h) NB. three function array
+
+NB. equality or checkEq should choose the best implementation based on the size/type of the array
+f <-> g NB. prove that f and g have the same functionality for the same inputs, and then allow the compiler to sub one for the other, based on the most efficient
+
+NB. application of a gerund (array of functions) should apply as an applicative, ie. f`g 1 2 ==> (f 1), g 2
+((2&*)`(5&+)) 1 2
+
+NB. focus on tree rather than specific web related details
+dom as tree
+homogeneous trees using aaron hsu tree
+manipulate using J
+tree = (depthVector, data)
+implicit map will be on data (second argument of tuple, like in haskell)
+functions in general will either apply to the structure (ie. reverse) or data (and if tree is the data, it is mapped across)
+Tree a -> (a->b) ==> Tree b
+use ` for trees (gerunds are written as functions around "," for example, (+,-) will create an applicative)
+, ,. and ,: things that are similar versions for trees ` `. `:
+name of language should then be FPL for Functor Programming Language
+perhaps I should go back to using string parsing? but what about urls, etc
+I think I prefer unicode characters more than ascii, at least for writing and thinking
+generalize the common operations used in apl such as +/ to use concepts like fold, monoid, mempty, and mappend 
+
+NB. perhaps (+/%#) 0$0 ==> 0 since +/ 0$0 ==> 0 and # 0$0 ==> 0 so 0%0 ==> 0, which is correct
+
+NB. could the unicode symbols be written as multiple ascii characters, with ligatures used to get symbols? no, this is a bad idea
+
+NB. info that could be used for correctness/low-level-optimization: type, size, shape
+
+NB. info for arrays should be based on each rank of the array (ie. is the array sorted on the outer rank or inner rank? ex. sorted boxed strings vs boxed sorted strings)
+
+NB. having statistics for arrays should also be used for optimization
+
+NB. perhaps the symbol for reverse could be , super imposed by ~ to mean reverse concatenate, and applied to y would yield the reverse of y
+
+NB. interesting idea: program ==> logical description (based on its mapping) ==> logically equivalent programs ==> ideal program (based on types and info of array)
+
+NB. perhaps the notation (f x) =: y ==> x =: f^:_1 y so that it generalizes pattern-matching to unification (with no changes to the syntax required)
+NB. though they have this issue: https://stackoverflow.com/questions/3748592/what-are-nk-patterns-and-why-are-they-banned-from-haskell-2010?noredirect=1&lq=1
+NB. which seems to only affect haskell-style definitions (which are not used in apl-like langs)
+
+NB. murcury (prolog + haskell) seems interesting
+
+NB. everything is a monad, then function composition becomes Kleisli composition
+
+NB. literate web-dsl files should be allowed by the compiler (good for writing the book/docs)
+
+NB. how should frp and its semantics be applied, for example, how would streams be represented and manipulated
+a:Si =. 0 NB. a is a stream of ints, with the initial value 0
+NB. user clicks a button which increments the current value of a, outputting a stream that includes the previous values
+a =. (1 + 0 { a) , a NB. a ==> 1 0
+NB. and the user clicks again
+a =. (1 + 0 { a) , a NB. a ==> 2 1 0
+NB. streams can be summed with the correct parenthisization if the new values are consed to the front of the stream
++/ a ==> +/ 2 1 0 ==> 2 + (1 + (0)) NB. which is the usual way summation is parened
+NB. these expressions could probably store the previous result and reuse it to generate the next value, ie. (1 + (0)) would be the cached previous value
+
+NB. how would reactive expressions that rely on things like time be updated and made efficient?
+
+
+NB. how to create the source-transform-sink (publish/subscribe (?)) using basic js techniques, and how to make it efficient?
+globalObject = {
+	tick: () => $('#time').innerHTML(clock())
+}
+window.setInterval(1000, globalObject['tick'])
+<p id="time"></p>
+
+NB. 60s could be the default screen refresh rate, though window.requestAnimationFrame() and DOMHighResTimeStamp could be useful
+
+NB. (reflex) frp code
+p{The time is now `time`} NB. the time is the dynamic time signal
+p{One plus one is `1 + 1`} NB. the expression 1+1 is transformed to (constSignal 1) + constSignal 1 ==> constSignal 2
+circle mouse , 10 NB. create a circle at x and y of mouse, with radius 10
+circle mouse , 10 %~ audioLevel NB. create a circle at x and y of mouse, with the size relative to the audioLevel
+NB. frp reflex by ryan trinkle
+NB. note that dom elements are created from the innermost of the expression outwards
+dynamicText textArea NB. create a textArea which feeds its value to a dynamic text that is placed below it
+NB. would generate the equivalent Haskell
+textArea >>= \x -> dynamicText x
+NB. or
+dynamicText <=< textArea 
+dynamicText textArea[maxlength=140] NB. create a textArea with a maxlength attr which feeds its value to a dynamic text that is placed below it
+' characters',~ ": # textArea NB. create a textArea that displays the number of characters after it (toString is ":)
+
+NB. use tacit programming as a way of representing trees (conflicts with modifiers, ie. f"(1) 1 2 3 may be fine, but what about f"(1 2) 1 2 3)
+data BinaryTree a = BinaryTree a (BinaryTree a) (BinaryTree a)
+									| Leaf
+x = (BinaryTree 2 (BinaryTree 1 Leaf Leaf) (BinaryTree 3 Leaf Leaf)
+
+NB. allow monadic values/functions to be combined using tacit programming
+(foo bar)
+NB. will become (assuming unary application)
+do a <- bar y
+   b <- y foo a
+	 pure b
+NB. will become (assuming binary application)
+do a <- bar y
+   b <- x foo a
+	 pure b
+
+NB. perhaps the + in p{hi}+p{world} should be extended to horizontally placed elems with - and | for vertically placed elems (probably + would be kept if the default is good; divs are blocks, ps are inline)
+
+NB. the modifier !. can be used to supply the default value (ie. it would be like the fromJust in haskell)
+
+NB. having a book that goes through the transition between named ==> ascii symbol ==> unicode symbol (optional) would be helpful
+NB. since people think that the ascii is too difficult, as well, I want people to make web apps as simply as possible,
+NB. and haskell is more readable for the beginner (https://documentation.divio.com/)
+
+NB. most, if not all, dom elem constraints should be available through the use of ascii symbols rather than explicit grids, ie.
+NB. in order of appearance: + sibling (default placement of block or inline), | vertical, - horizontal, ~ grid sibling (is this needed?)
+div>p{a}+p{b}|p{c}-p{d}~p{e}
+
+NB. creating tacit expressions should always be explicitly denoted. perhaps making it more regular with parens would be better
+fooTacit =: (-:|.)
+fooExplicit =: y-:|.y
+NB. another option would be to use the assignment as tacit vs explicit, though the problem being that I may want to use =. and =: to mean something else, seems like a good option
+fooTacit =. -:|.
+fooExplicit =: y-:|.y
+NB. if I wanted to differentiate between unary vs binary functions I could do the following
+fooTacitUnary  =.. -:|.
+fooTacitBinary =.: -:|.
+NB. and of course, the variables used in the explicit version is able to determine if a unary/binary/ambivilant is being created, by looking at the vars used (x, y, etc.)
+fooExplicit =: y-:|.y
+
+NB. automatically convert explicit to tacit when compiling
+
+NB. perhaps divs could be represented by parenthesis?
+(p{hi}+p{hello}) ==> div>p{hi}+p{hello}
+
+NB. how should styling be done when arbitrary CSS needs to be written?
+foo[background=red]
+NB. or perhaps
+foo[background__style=red]
+NB. or perhaps (preferred)
+foo[style='background:red']
+NB. or perhaps (preferred)
+foo[style='background';'red']
+
+NB. use + to actually mean that the "end" of the previous element is joined to the "start" of the next element
+
+NB. use a matrix solver to implement the constraint solving part in the cassowary constraint solving algo
+
+NB. use logic programming to define the required visual constraints and the common styles used for html/css
+NB. for example, forall x. x { color ~: background-color }, p[font-size] >= 10px, etc.
+
+NB. a>b in domexpr means that the b is wholly contained by a (required strength), 
+NB. thereby banning overflows by default (child forces parent expansion, if possible; otherwise scrolling enabled), ie.
+a>b 
+	==> a is a parent of b and a contains b 
+	==> a is a parent of b and (implied constraints: b.left >= a.left and b.right <= a.right and b.top >= a.top and b.bottom <= a.bottom)
+
+NB. if a box contains an element that doesn't fit wholly in it, the container expands until the contained element fits
+
+NB. an element is placed in the top left of the containing element, with no container elements being placed on the "top left" of the screen
+NB. where top left means the default ltr or rtl language defined, with the predefined padding included on the element (based on the carol tuttle type system)
+
+NB. which is better: (JS -> HTML -> HTML) or (JS -> JSON -> HTML) or (HTML_old -> HTML_section -> HTML_new), the second being preferred by hotwire and htmx
+NB. it seems the first and second are the most general, though they require js to work
+
+NB. use what jen simmons calls "intrinsic web design" as the default for the auto layout placement algorithm
+
+NB. show grids when debug mode is on when using the constraint css
+
+NB. when compiling my web lang, should it be just the J interpreter, or just my compiler, or perhaps the J interpreter interprets the code, then my compiler compiles the rest?
 
 NOTE: do not forget to fill out the NuVoc table above
-
-
-NB. Grammar (use https://ohmjs.org/editor/ to edit and save)
 DomDSL {
     Assignment = ((Variable "=")? (Expr | ParenExpr))?
     
@@ -1887,12 +2259,15 @@ DomDSL {
     Expr = (Element Id? Class* Attribute? Style* Body?) (Op (Expr | ParenExpr))?
     ParenExpr = "(" Expr ")" (Op (Expr | ParenExpr))?
     
-    Op = ">" | "+"
+    Op = ">" | "+" | "^" | "*"
     Body = "{" Text "}"
     Attribute = "[" (Attr "=" Value)+ "]"
     
-    Attr = "href"
-    Value = URL
+    Attr = Identifier
+    Value = (QuotedText | URL | absoluteURL)
+    absoluteURL = ("https://" | "http://")? "www."? ("a".."z" | "A".."z" | "." | "/" | "-" | "0".."9")*
+    Domain =  ("a".."z" | "A" .. "Z" | "0" .. "9" | ".")*
+    QuotedText = "\"" Text "\""
     
     Style = "@" Text
     
@@ -1902,10 +2277,9 @@ DomDSL {
     Id = "#" Identifier
     
     Identifier = ("a".."z") ("a".."z" | "A" .. "Z")*
-    Text =  ("a".."z" | "A" .. "Z")*
+    Text =  ("a".."z" | "A" .. "Z" | "0" .. "9")*
 }
 NB. tests
-div
 p
 p#
 p#val
@@ -1918,7 +2292,7 @@ p{foo} + p{bar}
 /bar = p{This is bar}
 /foo = a[href=/bar]{Click to go to bar}
 p@cyellow@bblue{Hello world}
-(div>p)+(div>p)
+(div>p+(div>p)
 div@g2x2
 p[title="Hello world"]
 img[src=google.com alt="an image"]

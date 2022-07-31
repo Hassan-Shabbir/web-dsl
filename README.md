@@ -135,8 +135,161 @@ Route variables:
 /foo/$i = `41 + i`
 ```
 
-## Concise
-Most programming languages (JSX is somewhat better) force you to write something like this (example from Mithril docs):
+## Conciseness (Examples)
+Here is a table that shows how concise my language is against other popular languages used for web development.
+
+| Example # | Percent | Chars (My lang) | Chars (Other lang) | Other lang |
+| --------- | ------- | --------------- | ------------------ | ---------- |
+| 1 | 19% | 50  | 263 | HTML    |
+| 2 | 29% | 88  | 303 | HTML    |
+| 3 | 15% | 22  | 143 | Svelte  |
+| 4 | 22% | 59  | 258 | Svelte  |
+| 5 | 30% | 91  | 295 | Reflex  |
+| 6 | 11% | 50  | 429 | Reflex  |
+| 7 | 31% | 63  | 200 | Flask   |
+| 8 | 15% | 81  | 508 | Mithril |
+
+AVERAGE: my language examples are 21.5% the size (in characters) of other language examples, meaning a reduction by 78.5%!
+
+### Example 1
+```
+.c@g2x3>p{hey}+p{this}+p{is}+p{a}+p{test}+p{grid}
+```
+```
+<div class="c">
+	<p>hey</p>
+	<p>this</p>
+	<p>is</p>
+	<p>a</p>
+	<p>test</p>
+	<p>grid</p>
+</div>
+<style>
+	.c {
+		display: grid;
+		grid-template-rows:    repeat(2, minmax(min-content, 1fr));
+		grid-template-columns: repeat(3, minmax(min-content, 1fr));
+	}
+</style>
+```
+
+### Example 2
+```
+(nav>.logo+.search+.button)+(.body>.page1+.page2+.page3)+(footer>.first+.second+.third)
+```
+```
+<nav>
+	<div class="logo"></div>
+	<div class="search"></div>
+	<div class="button"></div>
+</nav>
+<div class="body">
+	<div class="page1"></div>
+	<div class="page2"></div>
+	<div class="page3"></div>
+</div>
+<footer>
+	<div class="first"></div>
+	<div class="second"></div>
+	<div class="third"></div>
+</footer>
+```
+
+### Example 3
+```
+b{Clicked `#b` times}
+```
+```
+<script>
+	let count = 0;
+	function handleClick() {
+		count += 1;
+	}
+</script>
+<button on:click={handleClick}>
+	Clicked {count} times
+</button>
+```
+
+### Example 4
+```
+b{Count: `#b`}+p{`#b` * 2 = `2*#b`}+p{`2*#b` * 2 = `4*#b`}
+```
+```
+<script>
+	let count = 1;
+	$: doubled = count * 2;
+	$: quadrupled = doubled * 2;
+	function handleClick() {
+		count += 1;
+	}
+</script>
+<button on:click={handleClick}>
+	Count: {count}
+</button>
+<p>{count} * 2 = {doubled}</p>
+<p>{doubled} * 2 = {quadrupled}</p>
+```
+
+### Example 5
+```
+h1{Welcome to Reflex-Dom}+div>p{Reflex-Dom is:}+ul>li{Fun}+li{Not difficult}+li{Efficient}
+```
+```
+{-# LANGUAGE OverloadedStrings #-}
+import Reflex.Dom
+main :: IO()
+main = mainWidget $ do
+  el "h1" $ text "Welcome to Reflex-Dom"
+  el "div" $ do
+    el "p" $ text "Reflex-Dom is:"
+    el "ul" $ do
+      el "li" $ text "Fun"
+      el "li" $ text "Not dificult"
+      el "li" $ text "Efficient"
+```
+
+### Example 6
+```
+b#a{Increment}+b#b{Decrement}+p{Total: `(#a)-#b`}
+```
+```
+{-# LANGUAGE RecursiveDo #-}
+{-# LANGUAGE OverloadedStrings #-}
+import Reflex.Dom
+main :: IO ()
+main = mainWidget bodyElement 
+bodyElement :: MonadWidget t m => m ()
+bodyElement = do
+  rec el "h2" $ text "Combining Events with leftmost"
+      counts <- foldDyn (+) (0 :: Int) $ leftmost [1 <$ evIncr, -1 <$ evDecr]
+      el "div" $ display counts
+      evIncr <- button "Increment"
+      evDecr <- button "Decrement"
+  return ()
+```
+
+### Example 7
+```
+/foo = a[href=/bar]{Click to go to bar}
+/bar = p{This is bar} 
+```
+```
+from flask import Flask
+app = Flask(__name__)
+@app.route("/foo")
+def foo():
+    return f"<a href={url_for('bar')}>Click to go to bar</a>"
+@app.route("/bar")
+def bar():
+    return "<p>This is bar</p>"
+```
+
+### Example 8
+```
+/hello = main>h1.title{My first app}+b#a{`#a` clicks}
+/ = a[href=/hello]{Enter!}
+```
 ```
 var root = document.body
 var count = 0
@@ -163,33 +316,6 @@ m.route(root, "/splash", {
     "/splash": Splash,
     "/hello": Hello,
 })
-```
-
-When really all of that functionality can be written in only 2 lines of simple code.
-```
-/hello = main > h1.title{My first app} + b#a{`#a` clicks}
-/ = a[href=/hello]{Enter!}
-```
-
-Another example, this time with Haskell, using Reflex (which I actually love):
-```
-{-# LANGUAGE OverloadedStrings #-}
-import Reflex.Dom
-
-main :: IO()
-main = mainWidget $ do
-  el "h1" $ text "Welcome to Reflex-Dom"
-  el "div" $ do
-    el "p" $ text "Reflex-Dom is:"
-    el "ul" $ do
-      el "li" $ text "Fun"
-      el "li" $ text "Not difficult"
-      el "li" $ text "Efficient"
-```
-
-Which is really just:
-```
-/ = h1{Welcome to Reflex-Dom} + div > p{Reflex-Dom is:} + ul > li{Fun} + li{Not difficult} + li{Efficient}
 ```
 
 ## Want to learn more?

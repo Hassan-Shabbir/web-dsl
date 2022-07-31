@@ -200,6 +200,24 @@ NB. write about what influenced me or the things that were my inspiration/source
 parenthesized expressions
 (nav>.logo+.search+.button)+(.body>.page1+.page2+.page3)+(footer>.first+.second+.third)
 eq without expression:
+nav>.logo+.search+.button^.body>.page1+.page2+.page3^footer>.first+.second+.third
+html:
+<nav>
+	<div class="logo"></div>
+	<div class="search"></div>
+	<div class="button"></div>
+</nav>
+<div class="body">
+	<div class="page1"></div>
+	<div class="page2"></div>
+	<div class="page3"></div>
+</div>
+<footer>
+	<div class="first"></div>
+	<div class="second"></div>
+	<div class="third"></div>
+</footer>
+
 
 allow modifications within the language (toggle?)
 .foo ~ #elem
@@ -292,6 +310,7 @@ to make the sorts (asc, desc) work, the first value in the event must be the tim
 \:~ a,b,c
 
 NB. use the dark reader firefox extesion to convert to a default dark mode value or vice versa
+NB. they actually provide an api! "You can use Dark Reader to enable dark mode on your website!"
 
 NB. apply styles using css selectors, as well as combinators (>^*~, etc)
 p{hi} NB. creates p
@@ -303,6 +322,7 @@ NB. this is important otherwise data will be overwritten, eg.
 
 NB. what is the difference between ; (new command) and + (next sibling elem)
 NB. should they be merged?
+NB. nevermind, new command not needed (or use [ or ] from J), but newlines if allowed would append htmlexpr to the end of inside the body tag (right before the closing body tag)
 
 p = .bg-red-300 NB. sets all p to have red bg
 p = .bg-red-300; #names = .bg-gray-200 NB. one-liner using ; evaluated left to right?
@@ -406,11 +426,12 @@ NB. routes defined similar to component definition (but prefixed with /)
 /foo = h1{Hello World}+b:/bar{Click Here} NB. on default event (click) route to /bar
 /bar = h1{Hello, World!}+b:/foo{Click Here again}
 
-NB. every element should be dynamic by default and only static when explicitly stated
+NB. every element should be dynamic by default and only static (constant) when explicitly stated
 
 NB. concat two values of input fields
 NB. change a_v style values to instead be aV (saves one char typing and one visual character spot as well)
 ta#a+ta#b+p`aV,bV`
+NB. this is what is should be like (preferrably), actually: ta,ta (ie. create an input, create another input, then join the values of both as an output field
 
 NB. count the total of increments and decrements
 NB. bacon.js
@@ -577,6 +598,8 @@ b = person{Maria;january 8;red;maria@gmail.com;fb.nfshost.com}
 a union b
 NB. make types mandatory, then last value with type is last column
 person = name:text, birthday:day, color:color?, email:email, website:url, Hassan, march 11, blue, hassan@gmail.com, c3g.nfshost.com
+NB. nevermind, this style is preferred
+person[args]{body}
 
 NB. verify that function syntax and dom element body syntax is compatible
 
@@ -1043,6 +1066,7 @@ SELECT NESTED { customer.name, customer.email, [ { product.id, product.cost, } ]
 FROM customer LEFT OUTER JOIN NESTED product USING(customer_id) GROUP BY customer.customer_id
 NB. my version (WIP)
 'id' groupby 'total_cost =: +/cost' extend ('name email' p. customer) j: 'id cost' p. product
+NB. perhaps columns could have an id (or hash) that is used to index into the column?
 
 
 NB. mithril example
@@ -1638,7 +1662,7 @@ NB. @C_00_00_00 hwb mix long
 NB. @C_00_00_00_00 hwba mix long
 
 NB. the name webdsl (not web-dsl) has already been taken (https://github.com/webdsl/webdsl)
-NB. still need to find a good name for my program 
+NB. still need to find a good name for my program, perhaps ihsaan?
 
 NB. setting margin on x axis shorthand transforms
 margin-left: auto;
@@ -2250,7 +2274,28 @@ NB. show grids when debug mode is on when using the constraint css
 
 NB. when compiling my web lang, should it be just the J interpreter, or just my compiler, or perhaps the J interpreter interprets the code, then my compiler compiles the rest?
 
+NB. is quixotism a good name for web-dsl? quote from wikipedia: "It also serves to describe an idealism without regard to practicality. An impulsive person or act might be regarded as quixotic.
+NB. Quixotism is usually related to "over-idealism", meaning an idealism that doesn't take consequence or absurdity into account. It is also related to naïve romanticism and to utopianism."
+NB. nevermind, seems lots of people on github already have that name
+
+NB. take a look at Phoenix Framework
+
+NB. k (or was it q) has implicit joins? how would that be written
+
+NB. the circle with star in it could be used for monadic bind composition, see https://www.youtube.com/watch?v=Ssx2_JKpB3U @ 21:00
+
+NB. what would the meaning of (a+b)>c mean? perhaps (a>c)+b>c or error?
+
+NB. give error when an id is used twice, or append some sort of iteration id?
+
+NB. have a way of defining videos, pictures, and audio (ie. multimedia) using frp and some custom functions (see haskell libs for ideas)
+
+NB. quixotical seems to be a good project name
+
+
+
 NOTE: do not forget to fill out the NuVoc table above
+
 DomDSL {
     Assignment = ((Variable "=")? (Expr | ParenExpr))?
     

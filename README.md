@@ -1,4 +1,5 @@
 # A dsl for concisely writing web applications
+On average, my language is able to reduce the size of the code by around 78.5%! See the [https://github.com/Hassan-Shabbir/web-dsl#conciseness-examples](conciseness examples section) for more information.
 
 ## HTML dsl
 Uses a form of Emmet for generating html templates. (Note that most spaces are not required, only function application and array literals need spaces between values.)

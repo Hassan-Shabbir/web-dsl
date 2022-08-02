@@ -95,7 +95,7 @@ divide  =:  %
 length  =:  #
 
 averageTacit  =:  sum divide length
-averageExplicit  =:  ((sum y) divide (length y))
+averageExplicit  =:  {{ (sum y) divide (length y) }}
 ```
 
 And this is how you would check if a (string or numeric) array is a palindrome using a hook (two functions in a row):
@@ -106,7 +106,7 @@ match  =:  -:
 reverse  =:  |.
 
 palindromeTacit  =:  match reverse
-palindromeExplicit  =:  (y match (reverse y))
+palindromeExplicit  =:  {{ y match (reverse y) }}
 ```
 
 ## SQL dsl

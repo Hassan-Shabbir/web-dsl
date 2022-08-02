@@ -2290,7 +2290,19 @@ NB. give error when an id is used twice, or append some sort of iteration id?
 
 NB. have a way of defining videos, pictures, and audio (ie. multimedia) using frp and some custom functions (see haskell libs for ideas)
 
-NB. quixotical seems to be a good project name
+NB. quixotic or quixotical seems to be a good project name
+
+NB. semantic-placement duality: every htmlexpr should have an interpretation in semantic meaning (html) as well as logical constraints (css)
+NB. for example div>p{hello}+p{world} could mean that div is a parent of the two ps (html) as well as div contains the two ps (css)
+
+NB. hooks should be function composition instead (use fork with identity if you want a hook)
+
+NB. my lang should support all of the combinators (see code_report's table about combinators and bqn)
+
+NB. use generators to implement streams (as well as actors) in the reactive ui? (generators also used for lazy evaluation)
+
+NB. yellow text with blue background should not be allowed since it doesn't satisfy the constraint that the background color is sufficiently different to the background color
+p@cyellow@bblue{Hello world}
 
 
 

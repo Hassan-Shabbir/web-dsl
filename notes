@@ -2305,6 +2305,15 @@ NB. yellow text with blue background should not be allowed since it doesn't sati
 p@cyellow@bblue{Hello world}
 
 
+rec
+
+
+type
+
+traverse
+
+scan array
+
 
 NOTE: do not forget to fill out the NuVoc table above
 

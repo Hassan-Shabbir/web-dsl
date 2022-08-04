@@ -139,8 +139,8 @@ Route variables:
 ## Conciseness (Examples)
 Here is a table that shows how concise my language is against other popular languages used for web development.
 
-| Example # | Percent | Chars (My lang) | Chars (Other lang) | Other lang |
-| --------- | ------- | --------------- | ------------------ | ---------- |
+| Example # | Percent | Characters (My lang) | Characters (Other lang) | Other lang |
+| --------- | ------- | -------------------- | ----------------------- | ---------- |
 | 1 | 19% | 50  | 263 | HTML    |
 | 2 | 29% | 88  | 303 | HTML    |
 | 3 | 15% | 22  | 143 | Svelte  |

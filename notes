@@ -2304,16 +2304,24 @@ NB. use generators to implement streams (as well as actors) in the reactive ui? 
 NB. yellow text with blue background should not be allowed since it doesn't satisfy the constraint that the background color is sufficiently different to the background color
 p@cyellow@bblue{Hello world}
 
+NB. implicit forward declaration (should replace rec do in twitter reflex example)
+ta#i+p{`iV , '!'`} ==> p{`ta , '!'`}
 
-rec
+NB. the type of the input must be correct before the values are passed on to the next functions
+NB. if only one value is needed:
+Nothing + Nothing => Nothing
+x + Nothing => x
+Nothing + y => y
+x + y => x y
+NB. if both values are needed:
+Nothing * Nothing => Nothing
+x * Nothing => Nothing
+Nothing * x => Nothing
+x * y => x y
 
+NB. a stream is basically equivalent to |. ,\. 1 2 3 if the original array was 1 2 3
 
-type
-
-traverse
-
-scan array
-
+NB. p`1+1` is equivalent to p{`1+1`}
 
 NOTE: do not forget to fill out the NuVoc table above
 

@@ -2304,8 +2304,12 @@ NB. use generators to implement streams (as well as actors) in the reactive ui? 
 NB. yellow text with blue background should not be allowed since it doesn't satisfy the constraint that the background color is sufficiently different to the background color
 p@cyellow@bblue{Hello world}
 
-NB. implicit forward declaration (should replace rec do in twitter reflex example)
+NB. implicit declaration (should replace rec do in twitter reflex example)
+NB. Note: this creates a conflict between b{Inc}-b{Dec} to either mean subtract the value of inc from dec, vs place inc in horizontal line with dec.
+NB. perhaps this can be distinguished using b[v]{Inc}-b[v]{Dec} to mean the value of button, with simplified syntax bV{Inc}-bV{Dec}
+NB. this may be solvable using strings, right? and perhaps for simple expressions a function based version should be good, ie. elem 'div>p' ==> (elem 'div') parentOf elem 'p' (for example)
 ta#i+p{`iV , '!'`} ==> p{`ta , '!'`}
+b#a{Increment}+b#b{Decrement}+p{Total: `(#a)-#b`} ==> p{Total: `(b{Increment})-b{Decrement}`}
 
 NB. the type of the input must be correct before the values are passed on to the next functions
 NB. if only one value is needed:
@@ -2323,8 +2327,52 @@ NB. a stream is basically equivalent to |. ,\. 1 2 3 if the original array was 1
 
 NB. p`1+1` is equivalent to p{`1+1`}
 
-NOTE: do not forget to fill out the NuVoc table above
+NB. perhaps an extension to J with repeating chars could be used as dsl quoters, for example, <<p{hi}>> or [[p{hi}]] to distinguish between J proper and the html dsls
+NB. actually, (. (: ). ): are available for use since J does not use them, which can be used for quoting the dsl (quasiquotes), and which would not have the requirement to be balanced
+NB. ie, (. a+b+c would wrap everything to the right, similar to how $ works in haskell
 
+NB. https://guide.elm-lang.org/ is quite nice
+NB. elm's lazy and keyed optimizations should be applied by default in my lang, potentially using the relations primary key as the key
+
+NB. the same htmlcomponent does not have to look exactly the same everywhere it is used since it will be in different contexts which will have different constraints
+
+NB. perhaps (: f g h) could be used to denote ([: f [: g h), ie. (f @: g @: h)
+
+NB. have a way to construct svg shapes and images (including circle filters), as well as favicons, which can be scaled for web/offline apps
+NB. use frp as an example, which should be extended to images and other multimedia
+
+NB. use html codes (ie. &copy; &#169;) as a way to embed svg icons within the strings, for example, &tree;
+
+NB. Ensure websites created using web-dsl meet standards relating to speed, technical SEO, usability, security, browser/device compatibility, and regional privacy and accessibility
+NB. compliance (GDPR, AODA, WCAG, EQA, etc.)
+
+NB. {: and }: should have binary variants, right? so that you can take the last n elements, or drop the last n elements
+
+NB. allow for infinite datastructures, which would hopefully remove the need for generators and yields
+
+/**
+ * @param {number[]} nums1
+ * @param {number} m
+ * @param {number[]} nums2
+ * @param {number} n
+ * @return {void} Do not return anything, modify nums1 in-place instead.
+ * J solution: 1 2 3 0 0 0 {{ /:~ y,~ ((#x)-#y) {. x }} 2 5 6
+ */
+var merge = function(nums1, m, nums2, n) {
+    let empties = nums1.length - nums2.length
+    for (let i = 0; i < nums1.length; i++) {
+        if (nums1[i] >= nums2[0] || i >= m - empties) {
+            for (let j = nums1.length-2; j >= i; j--) {
+                nums1[j+1] = nums1[j]
+            }
+            nums1[i] = nums2.shift()
+            empties--
+        }
+    }
+}
+
+
+NOTE: do not forget to fill out the NuVoc table above
 DomDSL {
     Assignment = ((Variable "=")? (Expr | ParenExpr))?
     

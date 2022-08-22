@@ -1,5 +1,5 @@
 # A dsl for concisely writing web applications
-On average, my language is able to reduce the size of the code by around 78.5%! See the [conciseness examples section](https://github.com/Hassan-Shabbir/web-dsl#conciseness-examples) for more information.
+On average, my language is able to reduce the size of the code by around 80%! See the [conciseness examples section](https://github.com/Hassan-Shabbir/web-dsl#conciseness-examples) for more information.
 
 ## HTML dsl
 Uses a form of Emmet for generating html templates. (Note that most spaces are not required, only function application and array literals need spaces between values.)
@@ -149,8 +149,9 @@ Here is a table that shows how concise my language is against other popular lang
 | 6 | 11% | 50  | 429 | Reflex  |
 | 7 | 31% | 63  | 200 | Flask   |
 | 8 | 15% | 81  | 508 | Mithril |
+| 9 | 08% | 50  | 612 | Elm     |
 
-AVERAGE: my language examples are 21.5% the size (in characters) of other language examples, meaning a reduction by 78.5%!
+AVERAGE: my language examples are 20% the size (in characters) of other language examples, meaning a reduction by 80%!
 
 ### Example 1
 ```
@@ -317,6 +318,46 @@ m.route(root, "/splash", {
     "/splash": Splash,
     "/hello": Hello,
 })
+```
+
+### Example 9
+```
+b#a{Increment}+b#b{Decrement}+p{Total: `(#a)-#b`}
+```
+```
+module Main exposing (..)
+
+import Browser
+import Html exposing (Html, button, div, text)
+import Html.Events exposing (onClick)
+
+main =
+  Browser.sandbox { init = init, update = update, view = view }
+  
+type alias Model = Int
+
+init : Model
+init = 0
+
+type Msg
+  = Increment
+  | Decrement
+
+update : Msg -> Model -> Model
+update msg model =
+  case msg of
+    Increment ->
+      model + 1
+    Decrement ->
+      model - 1
+
+view : Model -> Html Msg
+view model =
+  div []
+    [ button [ onClick Decrement ] [ text "-" ]
+    , div [] [ text (String.fromInt model) ]
+    , button [ onClick Increment ] [ text "+" ]
+    ]
 ```
 
 ## Want to learn more?

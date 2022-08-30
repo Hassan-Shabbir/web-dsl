@@ -2350,6 +2350,11 @@ NB. {: and }: should have binary variants, right? so that you can take the last 
 
 NB. allow for infinite datastructures, which would hopefully remove the need for generators and yields
 
+NB. use ). or ): as a way to access repl features
+
+NB. use blumenfeld's alpha-phonics as a template for teaching the J lang part of my lang,
+NB. and generally also use things like spaced repetition, and the documentation system divio
+
 /**
  * @param {number[]} nums1
  * @param {number} m
